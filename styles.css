@@ -240,11 +240,11 @@ section h2 {
     gap: var(--spacing-unit);
 }
 
-/* People grid */
+/* People section */
 .people-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: calc(var(--spacing-unit) * 2);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
     margin: 0 auto;
 }
 
@@ -254,6 +254,8 @@ section h2 {
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    max-width: 200px;
 }
 
 .person-card:hover {
@@ -263,30 +265,35 @@ section h2 {
 
 .person-image {
     width: 100%;
+    height: 200px;
+    overflow: hidden;
 }
 
-.person-placeholder {
-    height: 250px;
+.person-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .person-details {
-    padding: var(--spacing-unit);
+    padding: 0.75rem;
 }
 
 .person-details h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
 }
 
 .person-role {
-    color: var(--secondary-color);
     font-size: 0.9rem;
+    color: var(--secondary-color);
     margin-bottom: 0.5rem;
 }
 
 .person-bio {
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: 0.85rem;
+    line-height: 1.4;
 }
 
 .people-intro, .blog-intro {
@@ -521,4 +528,132 @@ footer {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+/* Admin buttons */
+.admin-section {
+    display: flex;
+    justify-content: center;
+}
+
+.admin-button {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.admin-button:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .admin-section {
+        width: 100%;
+        margin: 1rem 0;
+    }
+    
+    .admin-button {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Admin Modal */
+.admin-modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.admin-modal-content {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.admin-modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--divider-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.admin-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--secondary-color);
+    transition: color 0.3s;
+}
+
+.admin-modal-close:hover {
+    color: var(--primary-color);
+}
+
+.admin-modal-body {
+    padding: 1.5rem;
+}
+
+.admin-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--divider-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.admin-modal-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.admin-modal-cancel {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.admin-modal-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.admin-modal-confirm {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.admin-modal-confirm:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
 }

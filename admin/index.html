@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fosskok Admin</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        // Check if user is authenticated
+        if (!sessionStorage.getItem('isAuthenticated')) {
+            // Redirect to login page if not authenticated
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body class="admin-body">
+    <header class="admin-header">
+        <div class="admin-header-content">
+            <div class="logo">
+                <h1>Fosskok Admin</h1>
+            </div>
+            <nav>
+                <a href="#" class="admin-nav-link active" data-section="people">Folka</a>
+                <a href="#" class="admin-nav-link" data-section="events">Program</a>
+                <a href="#" class="admin-nav-link" data-section="blog">Blog</a>
+                <a href="../index.html" class="admin-nav-link">Tilbake til nettside</a>
+                <a href="#" class="admin-nav-link" id="logout-btn">Logg ut</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <!-- People Management Section -->
+        <section id="people-section" class="admin-section active">
+            <div class="admin-section-header">
+                <h2>Administrer Folka</h2>
+                <button class="add-new-btn" id="add-person-btn">Legg til ny person</button>
+            </div>
+            
+            <div class="admin-grid" id="people-admin-grid">
+                <!-- People items will be loaded here dynamically -->
+                <div class="loading">Laster inn...</div>
+            </div>
+            
+            <!-- Add/Edit Person Form -->
+            <div class="admin-form-container" id="person-form-container">
+                <div class="admin-form">
+                    <h3 id="person-form-title">Legg til ny person</h3>
+                    <form id="person-form">
+                        <input type="hidden" id="person-id" name="id">
+                        
+                        <div class="form-group">
+                            <label for="person-name">Navn</label>
+                            <input type="text" id="person-name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="person-role">Rolle</label>
+                            <input type="text" id="person-role" name="role" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="person-bio">Bio</label>
+                            <textarea id="person-bio" name="bio" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="person-image">Bilde</label>
+                            <input type="file" id="person-image" class="image-upload" accept="image/*">
+                            <div class="image-preview" id="person-image-preview">
+                                <div class="image-placeholder"><div class="placeholder-text">Ingen bilde valgt</div></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="person-instagram">Instagram URL</label>
+                            <input type="url" id="person-instagram" name="instagram">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="person-website">Nettside URL</label>
+                            <input type="url" id="person-website" name="website">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" id="cancel-person-btn">Avbryt</button>
+                            <button type="submit" class="save-btn">Lagre</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Events Management Section -->
+        <section id="events-section" class="admin-section">
+            <div class="admin-section-header">
+                <h2>Administrer Program</h2>
+                <button class="add-new-btn" id="add-event-btn">Legg til ny hendelse</button>
+            </div>
+            
+            <div class="admin-grid" id="events-admin-grid">
+                <!-- Event items will be loaded here dynamically -->
+                <div class="loading">Laster inn...</div>
+            </div>
+            
+            <!-- Add/Edit Event Form -->
+            <div class="admin-form-container" id="event-form-container">
+                <div class="admin-form">
+                    <h3 id="event-form-title">Legg til ny hendelse</h3>
+                    <form id="event-form">
+                        <input type="hidden" id="event-id" name="id">
+                        
+                        <div class="form-group">
+                            <label for="event-title">Tittel</label>
+                            <input type="text" id="event-title" name="title" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-date">Dato</label>
+                            <input type="date" id="event-date" name="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-location">Sted</label>
+                            <input type="text" id="event-location" name="location" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-description">Beskrivelse</label>
+                            <textarea id="event-description" name="description" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-image">Bilde</label>
+                            <input type="file" id="event-image" class="image-upload" accept="image/*">
+                            <div class="image-preview" id="event-image-preview">
+                                <div class="image-placeholder"><div class="placeholder-text">Ingen bilde valgt</div></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-link">Link (valgfritt)</label>
+                            <input type="url" id="event-link" name="link">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" id="cancel-event-btn">Avbryt</button>
+                            <button type="submit" class="save-btn">Lagre</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Blog Management Section -->
+        <section id="blog-section" class="admin-section">
+            <div class="admin-section-header">
+                <h2>Administrer Blog</h2>
+                <button class="add-new-btn" id="add-blog-btn">Legg til nytt innlegg</button>
+            </div>
+            
+            <div class="admin-grid" id="blog-admin-grid">
+                <!-- Blog items will be loaded here dynamically -->
+                <div class="loading">Laster inn...</div>
+            </div>
+            
+            <!-- Add/Edit Blog Form -->
+            <div class="admin-form-container" id="blog-form-container">
+                <div class="admin-form">
+                    <h3 id="blog-form-title">Legg til nytt innlegg</h3>
+                    <form id="blog-form">
+                        <input type="hidden" id="blog-id" name="id">
+                        
+                        <div class="form-group">
+                            <label for="blog-title">Tittel</label>
+                            <input type="text" id="blog-title" name="title" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="blog-author">Forfatter</label>
+                            <select id="blog-author" name="authorId" required>
+                                <option value="">Velg forfatter</option>
+                                <!-- Authors will be loaded dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="blog-date">Dato</label>
+                            <input type="date" id="blog-date" name="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="blog-category">Kategori</label>
+                            <select id="blog-category" name="category">
+                                <option value="nyheter">Nyheter</option>
+                                <option value="kunst">Kunst</option>
+                                <option value="events">Events</option>
+                                <option value="annet">Annet</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="blog-excerpt">Utdrag</label>
+                            <textarea id="blog-excerpt" name="excerpt" rows="2" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="blog-content">Innhold</label>
+                            <textarea id="blog-content" name="content" rows="12" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="blog-tags">Tags (kommaseparert)</label>
+                            <input type="text" id="blog-tags" name="tags" placeholder="f.eks. kunst, utstilling, oslo">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" id="cancel-blog-btn">Avbryt</button>
+                            <button type="submit" class="save-btn">Lagre</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>

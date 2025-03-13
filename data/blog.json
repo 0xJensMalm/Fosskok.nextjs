@@ -1,0 +1,38 @@
+[
+  {
+    "id": "kunsten-a-samarbeide",
+    "title": "Kunsten å samarbeide",
+    "author": "Anna Nilsen",
+    "authorId": "anna-nilsen",
+    "date": "2025-03-10",
+    "displayDate": "10. mars 2025",
+    "excerpt": "Hvordan vi i Fosskok har lært å jobbe sammen på tvers av kunstneriske disipliner og personlige arbeidsstiler.",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "image": "images/blog/samarbeide.jpg",
+    "tags": ["samarbeid", "kunst", "kollektiv"]
+  },
+  {
+    "id": "byens-skjulte-rom",
+    "title": "Byens skjulte rom",
+    "author": "Markus Berg",
+    "authorId": "markus-berg",
+    "date": "2025-03-05",
+    "displayDate": "5. mars 2025",
+    "excerpt": "En fotoserie som utforsker de oversette mellomrommene i bylandskapet og hvordan de kan transformeres.",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "image": "images/blog/byrom.jpg",
+    "tags": ["fotografi", "bylandskap", "urban"]
+  },
+  {
+    "id": "lyd-som-materiale",
+    "title": "Lyd som materiale",
+    "author": "Sofia Larsen",
+    "authorId": "sofia-larsen",
+    "date": "2025-02-28",
+    "displayDate": "28. februar 2025",
+    "excerpt": "Refleksjoner rundt prosessen med å skape lydlandskap og hvordan lyd kan formes som et fysisk materiale.",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "image": "images/blog/lyd.jpg",
+    "tags": ["musikk", "lyd", "komposisjon"]
+  }
+]
