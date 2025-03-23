@@ -77,7 +77,7 @@ export async function PUT(
         name: data.name,
         role: data.role,
         bio: data.bio,
-        image_url: data.image,
+        image_url: data.image_url,
         updated_at: new Date().toISOString()
       })
       .eq('id', id)

@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         name: data.name,
         role: data.role,
         bio: data.bio,
-        image_url: data.image || null,
+        image_url: data.image_url || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
