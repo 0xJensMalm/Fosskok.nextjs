@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
+type RouteParams = {
+  params: {
+    id: string;
+  };
+};
+
 // GET /api/events/[id] - Get a specific event
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
     const supabase = await createClient();
@@ -12,7 +18,7 @@ export async function GET(
     const { data: event, error } = await supabase
       .from('events')
       .select('*')
-      .eq('id', context.params.id)
+      .eq('id', params.id)
       .single();
     
     if (error || !event) {
@@ -35,7 +41,7 @@ export async function GET(
 // PUT /api/events/[id] - Update an event
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
     // Check if user is authenticated
@@ -68,7 +74,7 @@ export async function PUT(
         location: data.location,
         updated_at: new Date().toISOString()
       })
-      .eq('id', context.params.id)
+      .eq('id', params.id)
       .select()
       .single();
     
@@ -93,7 +99,7 @@ export async function PUT(
 // DELETE /api/events/[id] - Delete an event
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
     // Check if user is authenticated
@@ -110,7 +116,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('events')
       .delete()
-      .eq('id', context.params.id);
+      .eq('id', params.id);
     
     if (error) {
       console.error('Error deleting event:', error);
