@@ -6,22 +6,22 @@
 }
 
 .title {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 500;
   margin-bottom: 1rem;
   color: var(--foreground);
 }
 
 .intro {
-  font-size: 1.2rem;
-  color: var(--accent);
-  margin-bottom: 2.5rem;
+  font-size: 1rem;
+  color: var(--foreground-secondary);
+  margin-bottom: 2rem;
 }
 
 .merchSectionsContainer {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 4rem;
 }
 
 .merchSection {
@@ -34,18 +34,103 @@
 }
 
 .sectionTitle {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
   color: var(--foreground);
 }
 
-.sectionDescription {
-  font-size: 1.1rem;
-  line-height: 1.6;
+.carouselContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.merchCarousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  gap: 1.5rem;
+  padding: 1rem 0.5rem;
+  width: 100%;
+}
+
+.merchCarousel::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.merchItem {
+  flex: 0 0 auto;
+  width: 180px;
+  background-color: var(--background);
+  border-radius: 4px;
+  padding: 1rem;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  border: 1px solid var(--divider);
+}
+
+.merchItem:hover {
+  transform: translateY(-3px);
+}
+
+.merchImageContainer {
+  width: 100%;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.placeholderIcon {
+  width: 60px;
+  height: 60px;
   color: var(--foreground-secondary);
-  margin-bottom: 1.5rem;
-  max-width: 800px;
+  opacity: 0.6;
+}
+
+.merchName {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}
+
+.merchPrice {
+  font-size: 0.9rem;
+  color: var(--foreground-secondary);
+}
+
+.scrollButton {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--background);
+  border: 1px solid var(--divider);
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+  color: var(--foreground);
+}
+
+.scrollButton:hover {
+  background-color: var(--card-bg);
+}
+
+.scrollLeft {
+  left: -16px;
+}
+
+.scrollRight {
+  right: -16px;
 }
 
 .comingSoonContainer {
@@ -66,32 +151,84 @@
 
 .comingSoonMessage h3 {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 1rem;
   color: var(--foreground);
 }
 
 .comingSoonMessage p {
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1.6;
   color: var(--foreground);
 }
 
+.sectionDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--foreground-secondary);
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+}
+
 @media (max-width: 768px) {
-  .title {
-    font-size: 2rem;
+  .container {
+    padding: 1.5rem;
   }
   
-  .comingSoonContainer {
-    padding: 1.5rem;
-    min-height: 180px;
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .merchSectionsContainer {
+    gap: 3rem;
   }
   
   .sectionTitle {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
   }
   
-  .comingSoonMessage h3 {
-    font-size: 1.3rem;
+  .merchItem {
+    width: 150px;
+  }
+  
+  .merchImageContainer {
+    height: 120px;
+  }
+  
+  .scrollButton {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .scrollLeft {
+    left: -10px;
+  }
+  
+  .scrollRight {
+    right: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .merchItem {
+    width: 130px;
+  }
+  
+  .merchImageContainer {
+    height: 100px;
+  }
+  
+  .placeholderIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .merchName {
+    font-size: 0.9rem;
+  }
+  
+  .merchPrice {
+    font-size: 0.8rem;
   }
 }
