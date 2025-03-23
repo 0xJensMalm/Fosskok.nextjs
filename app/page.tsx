@@ -35,9 +35,7 @@ export default function Home() {
     const fetchEvents = async () => {
       try {
         setIsLoading(true);
-        // Add cache-busting timestamp to prevent caching
-        const timestamp = new Date().getTime();
-        const response = await fetch(`/api/events?t=${timestamp}`);
+        const response = await fetch('/api/events');
         
         if (!response.ok) {
           throw new Error('Failed to fetch events');
@@ -69,12 +67,6 @@ export default function Home() {
     };
     
     fetchEvents();
-    
-    // Set up an interval to refresh data every 30 seconds
-    const intervalId = setInterval(fetchEvents, 30000);
-    
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
   }, []);
 
   return (

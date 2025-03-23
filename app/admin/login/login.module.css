@@ -1,0 +1,80 @@
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 160px);
+  padding: 2rem;
+}
+
+.loginCard {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--card-shadow);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.loginTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--foreground);
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.formGroup input {
+  padding: 0.75rem;
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: var(--card-bg-light, #f8f8f8);
+}
+
+.loginButton {
+  background-color: var(--accent, #666);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.loginButton:hover {
+  background-color: var(--accent-dark, #444);
+}
+
+.loginButton:disabled {
+  background-color: var(--accent-light, #999);
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  background-color: var(--error-light, #ffebee);
+  color: var(--error, #d32f2f);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}

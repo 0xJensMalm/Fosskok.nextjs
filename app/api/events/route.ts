@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { invalidateCache } from '@/utils/cache-helpers';
-
-// Set export const dynamic to force dynamic rendering and prevent caching
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 // GET /api/events - Get all events
 export async function GET() {

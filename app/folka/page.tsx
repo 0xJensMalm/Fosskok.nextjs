@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
-import { subscribeToCacheInvalidation, addCacheBuster } from '@/utils/cache-helpers';
 
 // Interface for Member type
 interface Member {
@@ -68,8 +67,7 @@ export default function Folka() {
     const fetchMembers = async () => {
       try {
         setIsLoading(true);
-        // Use the addCacheBuster utility to prevent caching
-        const response = await fetch(addCacheBuster('/api/members'));
+        const response = await fetch('/api/members');
         
         if (!response.ok) {
           throw new Error('Failed to fetch members');
@@ -85,22 +83,9 @@ export default function Folka() {
       }
     };
     
-    // Initial fetch
     fetchMembers();
-    
-    // Subscribe to cache invalidation events for members
-    const unsubscribe = subscribeToCacheInvalidation('members', fetchMembers);
-    
-    // Set up an interval to refresh data every 30 seconds as a fallback
-    const intervalId = setInterval(fetchMembers, 30000);
-    
-    // Clean up the interval and subscription on component unmount
-    return () => {
-      clearInterval(intervalId);
-      unsubscribe();
-    };
   }, []);
-  
+
   return (
     <ContentContainer>
       <div className={styles.container}>
