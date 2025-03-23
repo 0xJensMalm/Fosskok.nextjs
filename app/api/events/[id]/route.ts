@@ -128,6 +128,9 @@ export async function DELETE(
       );
     }
     
+    // Log successful deletion
+    console.log(`Successfully deleted event with ID: ${id}`);
+    
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting event:', error);

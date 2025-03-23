@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
+import { subscribeToTableChanges, addCacheBuster } from '@/utils/supabase/realtime';
 
 // Interface for Event type
 interface Event {
@@ -35,7 +36,8 @@ export default function Arrangementer() {
     const fetchEvents = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/events');
+        // Add cache buster to prevent browser caching
+        const response = await fetch(addCacheBuster('/api/events'));
         
         if (!response.ok) {
           throw new Error('Failed to fetch events');
@@ -58,6 +60,24 @@ export default function Arrangementer() {
     };
     
     fetchEvents();
+    
+    // Subscribe to real-time events from Supabase
+    const unsubscribe = subscribeToTableChanges('events', () => {
+      console.log('Events data changed, refreshing...');
+      fetchEvents();
+    });
+    
+    // Set up periodic refresh (every 30 seconds) as a fallback
+    const refreshInterval = setInterval(() => {
+      console.log('Periodic refresh of events data');
+      fetchEvents();
+    }, 30000);
+    
+    // Clean up subscriptions
+    return () => {
+      unsubscribe();
+      clearInterval(refreshInterval);
+    };
   }, []);
 
   return (
