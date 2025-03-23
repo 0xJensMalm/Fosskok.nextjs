@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     
     // Filter out unpublished posts for non-admin users
     if (!includeUnpublished) {
-      query = query.eq('published', true);
+      query = query.eq('is_published', true);
     }
     
     const { data: blogPosts, error } = await query;
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         content: data.content,
         author: data.author,
         image: data.image || null,
-        published: data.published !== undefined ? data.published : true,
+        is_published: data.published !== undefined ? data.published : true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
