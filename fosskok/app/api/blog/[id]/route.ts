@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+export interface RouteParams {
+  id: string;
+}
+
 // GET /api/blog/[id] - Get a specific blog post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: RouteParams }
 ) {
   try {
     const blogPost = await prisma.blogPost.findUnique({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
     });
     
@@ -42,7 +46,7 @@ export async function GET(
 // PUT /api/blog/[id] - Update a blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: RouteParams }
 ) {
   try {
     // Check if user is authenticated
@@ -66,7 +70,7 @@ export async function PUT(
     
     const updatedBlogPost = await prisma.blogPost.update({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
       data: {
         title: data.title,
@@ -90,7 +94,7 @@ export async function PUT(
 // DELETE /api/blog/[id] - Delete a blog post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: RouteParams }
 ) {
   try {
     // Check if user is authenticated
@@ -104,7 +108,7 @@ export async function DELETE(
 
     await prisma.blogPost.delete({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
     });
     
