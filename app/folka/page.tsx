@@ -10,7 +10,7 @@ interface Member {
   name: string;
   role: string;
   bio: string;
-  image?: string | null;
+  image_url?: string | null;
 }
 
 // Generate a color based on the member's name (for placeholder)
@@ -33,11 +33,11 @@ const MemberCard = ({ member }: { member: Member }) => {
     <div className={styles.memberSquare}>
       <div 
         className={styles.memberImageContainer}
-        style={imageError || !member.image ? { backgroundColor: getColorFromName(member.name) } : {}}
+        style={imageError || !member.image_url ? { backgroundColor: getColorFromName(member.name) } : {}}
       >
-        {!imageError && member.image ? (
+        {!imageError && member.image_url ? (
           <img 
-            src={member.image} 
+            src={member.image_url} 
             alt={member.name} 
             className={styles.memberImage}
             onError={() => setImageError(true)}

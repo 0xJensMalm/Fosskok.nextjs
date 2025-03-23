@@ -10,7 +10,7 @@ interface Member {
   name: string;
   role: string;
   bio: string;
-  image?: string | null;
+  image_url?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -27,7 +27,7 @@ const MembersPanel: React.FC = () => {
     name: '',
     role: '',
     bio: '',
-    image: ''
+    image_url: ''
   });
   
   // Fetch members from API
@@ -63,7 +63,7 @@ const MembersPanel: React.FC = () => {
       name: member.name,
       role: member.role,
       bio: member.bio,
-      image: member.image || ''
+      image_url: member.image_url || ''
     });
     setIsEditing(false);
   };
@@ -74,7 +74,7 @@ const MembersPanel: React.FC = () => {
       name: '',
       role: '',
       bio: '',
-      image: ''
+      image_url: ''
     });
     setIsEditing(true);
   };
@@ -94,7 +94,7 @@ const MembersPanel: React.FC = () => {
   const handleImageUploaded = (imageUrl: string) => {
     setFormData(prev => ({
       ...prev,
-      image: imageUrl
+      image_url: imageUrl
     }));
   };
   
@@ -224,9 +224,9 @@ const MembersPanel: React.FC = () => {
                 onClick={() => handleSelectMember(member)}
               >
                 <div className={styles.itemPreview}>
-                  {member.image ? (
+                  {member.image_url ? (
                     <img 
-                      src={member.image} 
+                      src={member.image_url} 
                       alt={member.name} 
                       className={styles.previewImage}
                     />
@@ -271,9 +271,9 @@ const MembersPanel: React.FC = () => {
               <div className={styles.detailsContent}>
                 <p><strong>Rolle:</strong> {selectedMember.role}</p>
                 <p><strong>Bio:</strong> {selectedMember.bio}</p>
-                {selectedMember.image && (
+                {selectedMember.image_url && (
                   <div className={styles.detailsImage}>
-                    <img src={selectedMember.image} alt={selectedMember.name} />
+                    <img src={selectedMember.image_url} alt={selectedMember.name} />
                   </div>
                 )}
               </div>
@@ -327,9 +327,9 @@ const MembersPanel: React.FC = () => {
                   onImageUploaded={handleImageUploaded}
                   folder="members"
                 />
-                {formData.image && (
+                {formData.image_url && (
                   <div className={styles.imagePreview}>
-                    <img src={formData.image} alt="Preview" />
+                    <img src={formData.image_url} alt="Preview" />
                   </div>
                 )}
               </div>
