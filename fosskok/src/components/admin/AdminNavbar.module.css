@@ -1,10 +1,17 @@
 .adminNav {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
+}
+
+.navButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .navButton {
@@ -28,14 +35,42 @@
   color: white;
 }
 
+.logoutButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--error, #d32f2f);
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--error, #d32f2f);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  background-color: var(--error, #d32f2f);
+  color: white;
+}
+
 @media (max-width: 768px) {
   .adminNav {
     flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .navButtons {
+    flex-direction: column;
+    width: 100%;
     gap: 0.5rem;
   }
   
   .navButton {
     width: 100%;
     padding: 0.5rem 1rem;
+  }
+  
+  .logoutButton {
+    align-self: flex-end;
+    margin-top: 0.5rem;
   }
 }
