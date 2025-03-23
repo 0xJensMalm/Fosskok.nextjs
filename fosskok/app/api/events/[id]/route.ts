@@ -1,23 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-
-export interface RouteParams {
-  id: string;
-}
+import { createClient } from '@/utils/supabase/server';
 
 // GET /api/events/[id] - Get a specific event
 export async function GET(
   request: NextRequest,
-  context: { params: RouteParams }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const event = await prisma.event.findUnique({
-      where: {
-        id: context.params.id,
-      },
-    });
+    const supabase = await createClient();
     
-    if (!event) {
+    const { data: event, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', params.id)
+      .single();
+    
+    if (error || !event) {
       return NextResponse.json(
         { error: 'Event not found' },
         { status: 404 }
@@ -37,7 +35,7 @@ export async function GET(
 // PUT /api/events/[id] - Update an event
 export async function PUT(
   request: NextRequest,
-  context: { params: RouteParams }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -59,17 +57,28 @@ export async function PUT(
       );
     }
     
-    const updatedEvent = await prisma.event.update({
-      where: {
-        id: context.params.id,
-      },
-      data: {
+    const supabase = await createClient();
+    
+    const { data: updatedEvent, error } = await supabase
+      .from('events')
+      .update({
         title: data.title,
         description: data.description,
-        date: new Date(data.date),
+        date: new Date(data.date).toISOString(),
         location: data.location,
-      },
-    });
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', params.id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error updating event:', error);
+      return NextResponse.json(
+        { error: 'Failed to update event' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json(updatedEvent);
   } catch (error) {
@@ -84,7 +93,7 @@ export async function PUT(
 // DELETE /api/events/[id] - Delete an event
 export async function DELETE(
   request: NextRequest,
-  context: { params: RouteParams }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -96,11 +105,20 @@ export async function DELETE(
       );
     }
 
-    await prisma.event.delete({
-      where: {
-        id: context.params.id,
-      },
-    });
+    const supabase = await createClient();
+    
+    const { error } = await supabase
+      .from('events')
+      .delete()
+      .eq('id', params.id);
+    
+    if (error) {
+      console.error('Error deleting event:', error);
+      return NextResponse.json(
+        { error: 'Failed to delete event' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json({ success: true });
   } catch (error) {

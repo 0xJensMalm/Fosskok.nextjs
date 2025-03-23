@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 // GET /api/members - Get all members
 export async function GET() {
   try {
-    const members = await prisma.member.findMany({
-      orderBy: {
-        name: 'asc',
-      },
-    });
+    const supabase = await createClient();
+    
+    const { data: members, error } = await supabase
+      .from('members')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching members:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch members' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json(members);
   } catch (error) {
@@ -42,14 +51,28 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const member = await prisma.member.create({
-      data: {
+    const supabase = await createClient();
+    
+    const { data: member, error } = await supabase
+      .from('members')
+      .insert({
         name: data.name,
         role: data.role,
         bio: data.bio,
         image: data.image || null,
-      },
-    });
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error creating member:', error);
+      return NextResponse.json(
+        { error: 'Failed to create member' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json(member, { status: 201 });
   } catch (error) {

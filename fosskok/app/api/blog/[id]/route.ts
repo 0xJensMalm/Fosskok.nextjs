@@ -1,23 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-
-export interface RouteParams {
-  id: string;
-}
+import { createClient } from '@/utils/supabase/server';
 
 // GET /api/blog/[id] - Get a specific blog post
 export async function GET(
   request: NextRequest,
-  context: { params: RouteParams }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const blogPost = await prisma.blogPost.findUnique({
-      where: {
-        id: context.params.id,
-      },
-    });
+    const supabase = await createClient();
     
-    if (!blogPost) {
+    const { data: blogPost, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('id', params.id)
+      .single();
+    
+    if (error || !blogPost) {
       return NextResponse.json(
         { error: 'Blog post not found' },
         { status: 404 }
@@ -46,7 +44,7 @@ export async function GET(
 // PUT /api/blog/[id] - Update a blog post
 export async function PUT(
   request: NextRequest,
-  context: { params: RouteParams }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -68,18 +66,29 @@ export async function PUT(
       );
     }
     
-    const updatedBlogPost = await prisma.blogPost.update({
-      where: {
-        id: context.params.id,
-      },
-      data: {
+    const supabase = await createClient();
+    
+    const { data: updatedBlogPost, error } = await supabase
+      .from('blog_posts')
+      .update({
         title: data.title,
         content: data.content,
         author: data.author,
         image: data.image,
-        published: data.published !== undefined ? data.published : true,
-      },
-    });
+        published: data.published,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', params.id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error updating blog post:', error);
+      return NextResponse.json(
+        { error: 'Failed to update blog post' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json(updatedBlogPost);
   } catch (error) {
@@ -94,7 +103,7 @@ export async function PUT(
 // DELETE /api/blog/[id] - Delete a blog post
 export async function DELETE(
   request: NextRequest,
-  context: { params: RouteParams }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -106,11 +115,20 @@ export async function DELETE(
       );
     }
 
-    await prisma.blogPost.delete({
-      where: {
-        id: context.params.id,
-      },
-    });
+    const supabase = await createClient();
+    
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', params.id);
+    
+    if (error) {
+      console.error('Error deleting blog post:', error);
+      return NextResponse.json(
+        { error: 'Failed to delete blog post' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json({ success: true });
   } catch (error) {

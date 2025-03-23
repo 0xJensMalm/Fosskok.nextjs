@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 // GET /api/events - Get all events
 export async function GET() {
   try {
-    const events = await prisma.event.findMany({
-      orderBy: {
-        date: 'asc',
-      },
-    });
+    const supabase = await createClient();
+    
+    const { data: events, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('date', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching events:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch events' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json(events);
   } catch (error) {
@@ -42,14 +51,28 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const event = await prisma.event.create({
-      data: {
+    const supabase = await createClient();
+    
+    const { data: event, error } = await supabase
+      .from('events')
+      .insert({
         title: data.title,
         description: data.description,
-        date: new Date(data.date),
+        date: new Date(data.date).toISOString(),
         location: data.location,
-      },
-    });
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error creating event:', error);
+      return NextResponse.json(
+        { error: 'Failed to create event' },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json(event, { status: 201 });
   } catch (error) {
