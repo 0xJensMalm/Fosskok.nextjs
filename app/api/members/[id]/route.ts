@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { invalidateCache } from '@/utils/cache-helpers';
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -72,7 +73,7 @@ export async function PUT(
         name: data.name,
         role: data.role,
         bio: data.bio,
-        image: data.image,
+        image_url: data.image,
         updated_at: new Date().toISOString()
       })
       .eq('id', id)
@@ -86,6 +87,10 @@ export async function PUT(
         { status: 500 }
       );
     }
+    
+    // Invalidate the members cache
+    invalidateCache('members');
+    console.log(`Cache invalidated for members after updating member ${id}`);
     
     return NextResponse.json(updatedMember);
   } catch (error) {
@@ -127,6 +132,10 @@ export async function DELETE(
         { status: 500 }
       );
     }
+    
+    // Invalidate the members cache
+    invalidateCache('members');
+    console.log(`Cache invalidated for members after deleting member ${id}`);
     
     return NextResponse.json({ success: true });
   } catch (error) {
