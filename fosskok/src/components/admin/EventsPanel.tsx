@@ -1,67 +1,87 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './AdminPanels.module.css';
 
-// Mock data for initial UI development
-const mockEvents = [
-  {
-    id: "event1",
-    title: "Konsert: August Kann",
-    date: "2025-04-15T19:00:00",
-    location: "Fosskok, Hammerveien 26",
-    description: "August Kann presenterer sitt nye album 'Stille vann' i en intim setting.",
-    image: "/images/placeholder-event.jpg",
-    ticketLink: "https://ticketco.no/example"
-  },
-  {
-    id: "event2",
-    title: "Kunstutstilling: Urbane Landskap",
-    date: "2025-05-10T18:00:00",
-    location: "Fosskok, Hammerveien 26",
-    description: "En gruppeutstilling som utforsker forholdet mellom natur og by i samtidskunsten.",
-    image: "/images/placeholder-event.jpg",
-    ticketLink: ""
-  }
-];
+// Interface for Event type
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 const EventsPanel: React.FC = () => {
-  const [events, setEvents] = useState(mockEvents);
-  const [selectedEvent, setSelectedEvent] = useState<typeof mockEvents[0] | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Form state for new/edit event
   const [formData, setFormData] = useState({
     title: '',
-    date: '',
-    location: '',
     description: '',
-    image: '',
-    ticketLink: ''
+    date: '',
+    location: ''
   });
   
-  const handleSelectEvent = (event: typeof mockEvents[0]) => {
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/events', {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        
+        const data = await response.json();
+        
+        // Format dates for form input
+        const formattedEvents = data.map((event: Event) => ({
+          ...event,
+          date: new Date(event.date).toISOString().split('T')[0]
+        }));
+        
+        setEvents(formattedEvents);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching events:', err);
+        setError('Failed to load events. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchEvents();
+  }, []);
+  
+  const handleSelectEvent = (event: Event) => {
     setSelectedEvent(event);
     setFormData({
       title: event.title,
-      date: event.date.substring(0, 16), // Format for datetime-local input
-      location: event.location,
       description: event.description,
-      image: event.image || '',
-      ticketLink: event.ticketLink || ''
+      date: event.date,
+      location: event.location
     });
     setIsEditing(false);
   };
   
   const handleNewEvent = () => {
     setSelectedEvent(null);
+    const today = new Date().toISOString().split('T')[0];
     setFormData({
       title: '',
-      date: '',
-      location: 'Fosskok, Hammerveien 26',
       description: '',
-      image: '',
-      ticketLink: ''
+      date: today,
+      location: 'Fosskok, Oslo'
     });
     setIsEditing(true);
   };
@@ -70,7 +90,9 @@ const EventsPanel: React.FC = () => {
     setIsEditing(true);
   };
   
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -78,37 +100,108 @@ const EventsPanel: React.FC = () => {
     }));
   };
   
-  const handleSave = () => {
-    // This would normally connect to an API
-    // For now, we'll just update the UI state
-    if (isEditing && selectedEvent) {
-      // Editing existing event
-      setEvents(prev => 
-        prev.map(e => 
-          e.id === selectedEvent.id 
-            ? { ...e, ...formData } 
-            : e
-        )
-      );
-    } else if (isEditing) {
-      // Adding new event
-      const newEvent = {
-        id: `event${Date.now()}`,
-        ...formData
-      };
-      setEvents(prev => [...prev, newEvent]);
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
+      
+      if (isEditing && selectedEvent) {
+        // Update existing event
+        const response = await fetch(`/api/events/${selectedEvent.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(formData),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to update event');
+        }
+        
+        const updatedEvent = await response.json();
+        
+        // Format date for display
+        const formattedEvent = {
+          ...updatedEvent,
+          date: new Date(updatedEvent.date).toISOString().split('T')[0]
+        };
+        
+        // Update local state
+        setEvents(prev => 
+          prev.map(e => 
+            e.id === selectedEvent.id ? formattedEvent : e
+          )
+        );
+        
+        setSelectedEvent(formattedEvent);
+      } else if (isEditing) {
+        // Create new event
+        const response = await fetch('/api/events', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(formData),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create event');
+        }
+        
+        const newEvent = await response.json();
+        
+        // Format date for display
+        const formattedEvent = {
+          ...newEvent,
+          date: new Date(newEvent.date).toISOString().split('T')[0]
+        };
+        
+        // Update local state
+        setEvents(prev => [...prev, formattedEvent]);
+        setSelectedEvent(formattedEvent);
+      }
+      
+      setIsEditing(false);
+      setError(null);
+    } catch (err) {
+      console.error('Error saving event:', err);
+      setError('Failed to save event. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsEditing(false);
   };
   
-  const handleDelete = () => {
-    if (selectedEvent) {
-      // This would normally connect to an API
-      // For now, we'll just update the UI state
+  const handleDelete = async () => {
+    if (!selectedEvent) return;
+    
+    if (!confirm(`Er du sikker på at du vil slette "${selectedEvent.title}"?`)) {
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      const response = await fetch(`/api/events/${selectedEvent.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete event');
+      }
+      
+      // Update local state
       setEvents(prev => prev.filter(e => e.id !== selectedEvent.id));
       setSelectedEvent(null);
       setIsEditing(false);
+      setError(null);
+    } catch (err) {
+      console.error('Error deleting event:', err);
+      setError('Failed to delete event. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -118,9 +211,7 @@ const EventsPanel: React.FC = () => {
     return date.toLocaleDateString('no-NO', { 
       year: 'numeric', 
       month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      day: 'numeric'
     });
   };
   
@@ -131,38 +222,48 @@ const EventsPanel: React.FC = () => {
         <button 
           className={styles.addButton}
           onClick={handleNewEvent}
+          disabled={isLoading}
         >
           Legg til arrangement
         </button>
       </div>
       
+      {error && (
+        <div className={styles.errorMessage}>
+          {error}
+        </div>
+      )}
+      
       <div className={styles.panelContent}>
         <div className={styles.itemsList}>
-          {events.map(event => (
-            <div 
-              key={event.id} 
-              className={`${styles.itemCard} ${selectedEvent?.id === event.id ? styles.selected : ''}`}
-              onClick={() => handleSelectEvent(event)}
-            >
-              <div className={styles.itemPreview}>
-                {event.image ? (
-                  <img 
-                    src={event.image} 
-                    alt={event.title} 
-                    className={styles.previewImage}
-                  />
-                ) : (
-                  <div className={styles.previewPlaceholder}>
-                    <span>Arrangement</span>
+          {isLoading && events.length === 0 ? (
+            <div className={styles.loadingState}>Laster arrangementer...</div>
+          ) : events.length === 0 ? (
+            <div className={styles.emptyState}>Ingen arrangementer funnet</div>
+          ) : (
+            events.map(event => (
+              <div 
+                key={event.id} 
+                className={`${styles.itemCard} ${selectedEvent?.id === event.id ? styles.selected : ''}`}
+                onClick={() => handleSelectEvent(event)}
+              >
+                <div className={styles.itemPreview}>
+                  <div className={styles.datePreview}>
+                    <span className={styles.dateDay}>
+                      {new Date(event.date).getDate()}
+                    </span>
+                    <span className={styles.dateMonth}>
+                      {new Date(event.date).toLocaleDateString('no-NO', { month: 'short' })}
+                    </span>
                   </div>
-                )}
+                </div>
+                <div className={styles.itemInfo}>
+                  <h3>{event.title}</h3>
+                  <p>{event.location}</p>
+                </div>
               </div>
-              <div className={styles.itemInfo}>
-                <h3>{event.title}</h3>
-                <p>{formatDate(event.date)}</p>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         
         <div className={styles.itemDetails}>
@@ -174,12 +275,14 @@ const EventsPanel: React.FC = () => {
                   <button 
                     className={styles.editButton}
                     onClick={handleEditEvent}
+                    disabled={isLoading}
                   >
                     Rediger
                   </button>
                   <button 
                     className={styles.deleteButton}
                     onClick={handleDelete}
+                    disabled={isLoading}
                   >
                     Slett
                   </button>
@@ -189,22 +292,10 @@ const EventsPanel: React.FC = () => {
               <div className={styles.detailsContent}>
                 <p><strong>Dato:</strong> {formatDate(selectedEvent.date)}</p>
                 <p><strong>Sted:</strong> {selectedEvent.location}</p>
-                <p><strong>Beskrivelse:</strong> {selectedEvent.description}</p>
-                
-                {selectedEvent.ticketLink && (
-                  <p>
-                    <strong>Billett-link:</strong>{' '}
-                    <a href={selectedEvent.ticketLink} target="_blank" rel="noopener noreferrer">
-                      {selectedEvent.ticketLink}
-                    </a>
-                  </p>
-                )}
-                
-                {selectedEvent.image && (
-                  <div className={styles.detailsImage}>
-                    <img src={selectedEvent.image} alt={selectedEvent.title} />
-                  </div>
-                )}
+                <div className={styles.eventDescription}>
+                  <strong>Beskrivelse:</strong>
+                  <div>{selectedEvent.description}</div>
+                </div>
               </div>
             </>
           ) : isEditing ? (
@@ -219,18 +310,20 @@ const EventsPanel: React.FC = () => {
                   name="title" 
                   value={formData.title} 
                   onChange={handleFormChange}
+                  disabled={isLoading}
                   required
                 />
               </div>
               
               <div className={styles.formGroup}>
-                <label htmlFor="date">Dato og tid</label>
+                <label htmlFor="date">Dato</label>
                 <input 
-                  type="datetime-local" 
+                  type="date" 
                   id="date" 
                   name="date" 
                   value={formData.date} 
                   onChange={handleFormChange}
+                  disabled={isLoading}
                   required
                 />
               </div>
@@ -243,6 +336,7 @@ const EventsPanel: React.FC = () => {
                   name="location" 
                   value={formData.location} 
                   onChange={handleFormChange}
+                  disabled={isLoading}
                   required
                 />
               </div>
@@ -255,31 +349,8 @@ const EventsPanel: React.FC = () => {
                   value={formData.description} 
                   onChange={handleFormChange}
                   rows={5}
+                  disabled={isLoading}
                   required
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="image">Bilde URL</label>
-                <input 
-                  type="text" 
-                  id="image" 
-                  name="image" 
-                  value={formData.image} 
-                  onChange={handleFormChange}
-                  placeholder="f.eks. /images/event.jpg"
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="ticketLink">Billett-link (valgfritt)</label>
-                <input 
-                  type="url" 
-                  id="ticketLink" 
-                  name="ticketLink" 
-                  value={formData.ticketLink} 
-                  onChange={handleFormChange}
-                  placeholder="https://..."
                 />
               </div>
               
@@ -287,14 +358,16 @@ const EventsPanel: React.FC = () => {
                 <button 
                   className={styles.cancelButton}
                   onClick={() => setIsEditing(false)}
+                  disabled={isLoading}
                 >
                   Avbryt
                 </button>
                 <button 
                   className={styles.saveButton}
                   onClick={handleSave}
+                  disabled={isLoading}
                 >
-                  Lagre
+                  {isLoading ? 'Lagrer...' : 'Lagre'}
                 </button>
               </div>
             </div>

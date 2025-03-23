@@ -1,108 +1,101 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
 
-// Mock data for events
-const events = [
-  {
-    id: "utstilling-2025",
-    title: "Utstillingsåpning",
-    date: {
-      day: "15",
-      month: "Mar",
-      year: "2025",
-      full: "2025-03-15"
-    },
-    location: "Galleri, Oslo",
-    description: "Bli med på åpningen av vår nye utstilling med verk fra alle kollektivets medlemmer.",
-    image: null
-  },
-  {
-    id: "workshop-2025",
-    title: "Workshop",
-    date: {
-      day: "22",
-      month: "Mar",
-      year: "2025",
-      full: "2025-03-22"
-    },
-    location: "Fosskok Studio, Oslo",
-    description: "Kreativ workshop med fokus på bærekraftige materialer og gjenbruk i kunst.",
-    image: null
-  },
-  {
-    id: "kunstnersamtale-2025",
-    title: "Kunstnersamtale",
-    date: {
-      day: "5",
-      month: "Apr",
-      year: "2025",
-      full: "2025-04-05"
-    },
-    location: "Kulturhuset, Oslo",
-    description: "En samtale med kunstnerne bak den nye utstillingen om prosessen og inspirasjonskildene.",
-    image: null
-  },
-  {
-    id: "filmvisning-2025",
-    title: "Filmvisning",
-    date: {
-      day: "12",
-      month: "Apr",
-      year: "2025",
-      full: "2025-04-12"
-    },
-    location: "Cinemateket, Oslo",
-    description: "Visning av eksperimentelle kortfilmer laget av kollektivets medlemmer.",
-    image: null
-  },
-  {
-    id: "konsert-2025",
-    title: "Konsert",
-    date: {
-      day: "19",
-      month: "Apr",
-      year: "2025",
-      full: "2025-04-19"
-    },
-    location: "Blå, Oslo",
-    description: "Liveopptreden med musikere fra kollektivet og spesielle gjester.",
-    image: null
-  },
-  {
-    id: "poesikveld-2025",
-    title: "Poesikveld",
-    date: {
-      day: "26",
-      month: "Apr",
-      year: "2025",
-      full: "2025-04-26"
-    },
-    location: "Litteraturhuset, Oslo",
-    description: "En kveld med poesi, prosa og performance fra kollektivets forfattere.",
-    image: null
-  }
-];
+// Interface for Event type
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+}
+
+// Format date for display
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  
+  return {
+    day: date.getDate().toString(),
+    month: date.toLocaleDateString('no-NO', { month: 'short' }),
+    year: date.getFullYear().toString(),
+    full: dateString
+  };
+};
 
 export default function Arrangementer() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/events');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        
+        const data = await response.json();
+        
+        // Sort events by date (ascending)
+        const sortedEvents = [...data].sort((a, b) => 
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+        
+        setEvents(sortedEvents);
+      } catch (err) {
+        console.error('Error fetching events:', err);
+        setError('Failed to load events');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchEvents();
+  }, []);
+
   return (
     <ContentContainer>
-      <div className={styles.container}>    
-        <div className={styles.eventsGrid}>
-          {events.map(event => (
-            <div key={event.id} className={styles.eventCard}>
-              <div className={styles.eventDate}>
-                <span className={styles.day}>{event.date.day}</span>
-                <span className={styles.month}>{event.date.month}</span>
-              </div>
-              <div className={styles.eventDetails}>
-                <h3>{event.title}</h3>
-                <p className={styles.eventLocation}>{event.location}</p>
-                <p className={styles.eventDescription}>{event.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className={styles.container}>
+        {isLoading ? (
+          <div className={styles.loadingContainer}>
+            <p>Laster inn arrangementer...</p>
+          </div>
+        ) : error ? (
+          <div className={styles.errorContainer}>
+            <p>{error}</p>
+          </div>
+        ) : events.length === 0 ? (
+          <div className={styles.emptyContainer}>
+            <p>Ingen arrangementer funnet</p>
+          </div>
+        ) : (
+          <div className={styles.eventsGrid}>
+            {events.map(event => {
+              const formattedDate = formatDate(event.date);
+              
+              return (
+                <div key={event.id} className={styles.eventCard}>
+                  <div className={styles.eventDate}>
+                    <span className={styles.day}>{formattedDate.day}</span>
+                    <span className={styles.month}>{formattedDate.month}</span>
+                  </div>
+                  <div className={styles.eventDetails}>
+                    <h3>{event.title}</h3>
+                    <p className={styles.eventLocation}>{event.location}</p>
+                    <p className={styles.eventDescription}>{event.description}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </ContentContainer>
   );

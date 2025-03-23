@@ -1,54 +1,17 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
 
-// Mock data for members
-const members = [
-  {
-    id: "member1",
-    name: "Anna Johansen",
-    role: "Kunstner & Kurator",
-    bio: "Anna arbeider med maleri og installasjoner. Hun utforsker temaer knyttet til natur og menneskelig påvirkning.",
-    image: "/images/placeholder-person.jpg"
-  },
-  {
-    id: "member2",
-    name: "Erik Larsen",
-    role: "Musiker & Komponist",
-    bio: "Erik er en eksperimentell komponist som arbeider i skjæringspunktet mellom elektronisk og akustisk musikk.",
-    image: "/images/placeholder-person.jpg"
-  },
-  {
-    id: "member3",
-    name: "Maria Olsen",
-    role: "Fotograf",
-    bio: "Maria dokumenterer hverdagslivet i urbane miljøer, med fokus på sosiale strukturer og fellesskap.",
-    image: "/images/placeholder-person.jpg"
-  },
-  {
-    id: "member4",
-    name: "Sofie Hansen",
-    role: "Danser & Koreograf",
-    bio: "Sofie utforsker bevegelse som kommunikasjonsform og arbeider med improvisasjon og stedsspesifikke verk.",
-    image: "/images/placeholder-person.jpg"
-  },
-  {
-    id: "member5",
-    name: "Thomas Berg",
-    role: "Forfatter & Poet",
-    bio: "Thomas skriver tekster som utforsker identitet, tilhørighet og språkets grenser.",
-    image: "/images/placeholder-person.jpg"
-  },
-  {
-    id: "member6",
-    name: "Lisa Andersen",
-    role: "Visuell kunstner",
-    bio: "Lisa arbeider med video og digitale medier, og utforsker temaer knyttet til teknologi og menneskelighet.",
-    image: "/images/placeholder-person.jpg"
-  }
-];
+// Interface for Member type
+interface Member {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  image?: string | null;
+}
 
 // Generate a color based on the member's name (for placeholder)
 const getColorFromName = (name: string) => {
@@ -63,16 +26,16 @@ const getColorFromName = (name: string) => {
 };
 
 // Member card component
-const MemberCard = ({ member }: { member: typeof members[0] }) => {
+const MemberCard = ({ member }: { member: Member }) => {
   const [imageError, setImageError] = useState(false);
   
   return (
     <div className={styles.memberSquare}>
       <div 
         className={styles.memberImageContainer}
-        style={imageError ? { backgroundColor: getColorFromName(member.name) } : {}}
+        style={imageError || !member.image ? { backgroundColor: getColorFromName(member.name) } : {}}
       >
-        {!imageError ? (
+        {!imageError && member.image ? (
           <img 
             src={member.image} 
             alt={member.name} 
@@ -95,14 +58,56 @@ const MemberCard = ({ member }: { member: typeof members[0] }) => {
 };
 
 export default function Folka() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch members from API
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/members');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch members');
+        }
+        
+        const data = await response.json();
+        setMembers(data);
+      } catch (err) {
+        console.error('Error fetching members:', err);
+        setError('Failed to load members');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchMembers();
+  }, []);
+
   return (
     <ContentContainer>
       <div className={styles.container}>
-        <div className={styles.membersGrid}>
-          {members.map(member => (
-            <MemberCard key={member.id} member={member} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className={styles.loadingContainer}>
+            <p>Laster inn teamet...</p>
+          </div>
+        ) : error ? (
+          <div className={styles.errorContainer}>
+            <p>{error}</p>
+          </div>
+        ) : members.length === 0 ? (
+          <div className={styles.emptyContainer}>
+            <p>Ingen teammedlemmer funnet</p>
+          </div>
+        ) : (
+          <div className={styles.membersGrid}>
+            {members.map(member => (
+              <MemberCard key={member.id} member={member} />
+            ))}
+          </div>
+        )}
       </div>
     </ContentContainer>
   );

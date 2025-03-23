@@ -1,31 +1,26 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './AdminPanels.module.css';
 import ImageUploader from './ImageUploader';
 
-// Mock data for initial UI development
-const mockMembers = [
-  {
-    id: "member1",
-    name: "Anna Johansen",
-    role: "Kunstner & Kurator",
-    bio: "Anna arbeider med maleri og installasjoner. Hun utforsker temaer knyttet til natur og menneskelig påvirkning.",
-    image: "/images/placeholder-person.jpg"
-  },
-  {
-    id: "member2",
-    name: "Erik Larsen",
-    role: "Musiker & Komponist",
-    bio: "Erik er en eksperimentell komponist som arbeider i skjæringspunktet mellom elektronisk og akustisk musikk.",
-    image: "/images/placeholder-person.jpg"
-  }
-];
+// Interface for Member type
+interface Member {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  image?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 const MembersPanel: React.FC = () => {
-  const [members, setMembers] = useState(mockMembers);
-  const [selectedMember, setSelectedMember] = useState<typeof mockMembers[0] | null>(null);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Form state for new/edit member
   const [formData, setFormData] = useState({
@@ -35,7 +30,34 @@ const MembersPanel: React.FC = () => {
     image: ''
   });
   
-  const handleSelectMember = (member: typeof mockMembers[0]) => {
+  // Fetch members from API
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/members', {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch members');
+        }
+        
+        const data = await response.json();
+        setMembers(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching members:', err);
+        setError('Failed to load members. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchMembers();
+  }, []);
+  
+  const handleSelectMember = (member: Member) => {
     setSelectedMember(member);
     setFormData({
       name: member.name,
@@ -76,37 +98,96 @@ const MembersPanel: React.FC = () => {
     }));
   };
   
-  const handleSave = () => {
-    // This would normally connect to an API
-    // For now, we'll just update the UI state
-    if (isEditing && selectedMember) {
-      // Editing existing member
-      setMembers(prev => 
-        prev.map(m => 
-          m.id === selectedMember.id 
-            ? { ...m, ...formData } 
-            : m
-        )
-      );
-    } else if (isEditing) {
-      // Adding new member
-      const newMember = {
-        id: `member${Date.now()}`,
-        ...formData
-      };
-      setMembers(prev => [...prev, newMember]);
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
+      
+      if (isEditing && selectedMember) {
+        // Update existing member
+        const response = await fetch(`/api/members/${selectedMember.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(formData),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to update member');
+        }
+        
+        const updatedMember = await response.json();
+        
+        // Update local state
+        setMembers(prev => 
+          prev.map(m => 
+            m.id === selectedMember.id ? updatedMember : m
+          )
+        );
+        
+        setSelectedMember(updatedMember);
+      } else if (isEditing) {
+        // Create new member
+        const response = await fetch('/api/members', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(formData),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create member');
+        }
+        
+        const newMember = await response.json();
+        
+        // Update local state
+        setMembers(prev => [...prev, newMember]);
+        setSelectedMember(newMember);
+      }
+      
+      setIsEditing(false);
+      setError(null);
+    } catch (err) {
+      console.error('Error saving member:', err);
+      setError('Failed to save member. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsEditing(false);
   };
   
-  const handleDelete = () => {
-    if (selectedMember) {
-      // This would normally connect to an API
-      // For now, we'll just update the UI state
+  const handleDelete = async () => {
+    if (!selectedMember) return;
+    
+    if (!confirm(`Er du sikker på at du vil slette ${selectedMember.name}?`)) {
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      const response = await fetch(`/api/members/${selectedMember.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete member');
+      }
+      
+      // Update local state
       setMembers(prev => prev.filter(m => m.id !== selectedMember.id));
       setSelectedMember(null);
       setIsEditing(false);
+      setError(null);
+    } catch (err) {
+      console.error('Error deleting member:', err);
+      setError('Failed to delete member. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -117,38 +198,51 @@ const MembersPanel: React.FC = () => {
         <button 
           className={styles.addButton}
           onClick={handleNewMember}
+          disabled={isLoading}
         >
           Legg til medlem
         </button>
       </div>
       
+      {error && (
+        <div className={styles.errorMessage}>
+          {error}
+        </div>
+      )}
+      
       <div className={styles.panelContent}>
         <div className={styles.itemsList}>
-          {members.map(member => (
-            <div 
-              key={member.id} 
-              className={`${styles.itemCard} ${selectedMember?.id === member.id ? styles.selected : ''}`}
-              onClick={() => handleSelectMember(member)}
-            >
-              <div className={styles.itemPreview}>
-                {member.image ? (
-                  <img 
-                    src={member.image} 
-                    alt={member.name} 
-                    className={styles.previewImage}
-                  />
-                ) : (
-                  <div className={styles.previewInitials}>
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-                )}
+          {isLoading && members.length === 0 ? (
+            <div className={styles.loadingState}>Laster medlemmer...</div>
+          ) : members.length === 0 ? (
+            <div className={styles.emptyState}>Ingen medlemmer funnet</div>
+          ) : (
+            members.map(member => (
+              <div 
+                key={member.id} 
+                className={`${styles.itemCard} ${selectedMember?.id === member.id ? styles.selected : ''}`}
+                onClick={() => handleSelectMember(member)}
+              >
+                <div className={styles.itemPreview}>
+                  {member.image ? (
+                    <img 
+                      src={member.image} 
+                      alt={member.name} 
+                      className={styles.previewImage}
+                    />
+                  ) : (
+                    <div className={styles.previewInitials}>
+                      {member.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  )}
+                </div>
+                <div className={styles.itemInfo}>
+                  <h3>{member.name}</h3>
+                  <p>{member.role}</p>
+                </div>
               </div>
-              <div className={styles.itemInfo}>
-                <h3>{member.name}</h3>
-                <p>{member.role}</p>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         
         <div className={styles.itemDetails}>
@@ -160,12 +254,14 @@ const MembersPanel: React.FC = () => {
                   <button 
                     className={styles.editButton}
                     onClick={handleEditMember}
+                    disabled={isLoading}
                   >
                     Rediger
                   </button>
                   <button 
                     className={styles.deleteButton}
                     onClick={handleDelete}
+                    disabled={isLoading}
                   >
                     Slett
                   </button>
@@ -194,6 +290,7 @@ const MembersPanel: React.FC = () => {
                   name="name" 
                   value={formData.name} 
                   onChange={handleFormChange}
+                  disabled={isLoading}
                   required
                 />
               </div>
@@ -206,6 +303,7 @@ const MembersPanel: React.FC = () => {
                   name="role" 
                   value={formData.role} 
                   onChange={handleFormChange}
+                  disabled={isLoading}
                   required
                 />
               </div>
@@ -218,6 +316,7 @@ const MembersPanel: React.FC = () => {
                   value={formData.bio} 
                   onChange={handleFormChange}
                   rows={5}
+                  disabled={isLoading}
                   required
                 />
               </div>
@@ -239,14 +338,16 @@ const MembersPanel: React.FC = () => {
                 <button 
                   className={styles.cancelButton}
                   onClick={() => setIsEditing(false)}
+                  disabled={isLoading}
                 >
                   Avbryt
                 </button>
                 <button 
                   className={styles.saveButton}
                   onClick={handleSave}
+                  disabled={isLoading}
                 >
-                  Lagre
+                  {isLoading ? 'Lagrer...' : 'Lagre'}
                 </button>
               </div>
             </div>
