@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 // GET /api/events/[id] - Get a specific event
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
@@ -12,7 +12,7 @@ export async function GET(
     const { data: event, error } = await supabase
       .from('events')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', context.params.id)
       .single();
     
     if (error || !event) {
@@ -35,7 +35,7 @@ export async function GET(
 // PUT /api/events/[id] - Update an event
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -68,7 +68,7 @@ export async function PUT(
         location: data.location,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', context.params.id)
       .select()
       .single();
     
@@ -93,7 +93,7 @@ export async function PUT(
 // DELETE /api/events/[id] - Delete an event
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -110,7 +110,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('events')
       .delete()
-      .eq('id', params.id);
+      .eq('id', context.params.id);
     
     if (error) {
       console.error('Error deleting event:', error);

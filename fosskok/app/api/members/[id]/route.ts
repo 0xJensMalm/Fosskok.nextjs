@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 // GET /api/members/[id] - Get a specific member
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
@@ -12,7 +12,7 @@ export async function GET(
     const { data: member, error } = await supabase
       .from('members')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', context.params.id)
       .single();
     
     if (error || !member) {
@@ -35,7 +35,7 @@ export async function GET(
 // PUT /api/members/[id] - Update a member
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -68,7 +68,7 @@ export async function PUT(
         image: data.image,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', context.params.id)
       .select()
       .single();
     
@@ -93,7 +93,7 @@ export async function PUT(
 // DELETE /api/members/[id] - Delete a member
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -110,7 +110,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('members')
       .delete()
-      .eq('id', params.id);
+      .eq('id', context.params.id);
     
     if (error) {
       console.error('Error deleting member:', error);

@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 // GET /api/blog/[id] - Get a specific blog post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
@@ -12,7 +12,7 @@ export async function GET(
     const { data: blogPost, error } = await supabase
       .from('blog_posts')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', context.params.id)
       .single();
     
     if (error || !blogPost) {
@@ -44,7 +44,7 @@ export async function GET(
 // PUT /api/blog/[id] - Update a blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -78,7 +78,7 @@ export async function PUT(
         published: data.published,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', context.params.id)
       .select()
       .single();
     
@@ -103,7 +103,7 @@ export async function PUT(
 // DELETE /api/blog/[id] - Delete a blog post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -120,7 +120,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('blog_posts')
       .delete()
-      .eq('id', params.id);
+      .eq('id', context.params.id);
     
     if (error) {
       console.error('Error deleting blog post:', error);
