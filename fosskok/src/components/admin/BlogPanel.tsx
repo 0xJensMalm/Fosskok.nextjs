@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './AdminPanels.module.css';
+import ImageUploader from './ImageUploader';
 
 // Mock data for initial UI development
 const mockBlogPosts = [
@@ -84,6 +85,13 @@ const BlogPanel: React.FC = () => {
         [name]: value
       }));
     }
+  };
+
+  const handleImageUploaded = (imageUrl: string) => {
+    setFormData(prev => ({
+      ...prev,
+      image: imageUrl
+    }));
   };
   
   const handleSave = () => {
@@ -255,15 +263,16 @@ const BlogPanel: React.FC = () => {
               </div>
               
               <div className={styles.formGroup}>
-                <label htmlFor="image">Bilde URL</label>
-                <input 
-                  type="text" 
-                  id="image" 
-                  name="image" 
-                  value={formData.image} 
-                  onChange={handleFormChange}
-                  placeholder="f.eks. /images/blog.jpg"
+                <label>Bilde</label>
+                <ImageUploader 
+                  onImageUploaded={handleImageUploaded}
+                  folder="blog"
                 />
+                {formData.image && (
+                  <div className={styles.imagePreview}>
+                    <img src={formData.image} alt="Preview" />
+                  </div>
+                )}
               </div>
               
               <div className={styles.formGroup}>

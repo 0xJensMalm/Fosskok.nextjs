@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './AdminPanels.module.css';
+import ImageUploader from './ImageUploader';
 
 // Mock data for initial UI development
 const mockMembers = [
@@ -65,6 +66,13 @@ const MembersPanel: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleImageUploaded = (imageUrl: string) => {
+    setFormData(prev => ({
+      ...prev,
+      image: imageUrl
     }));
   };
   
@@ -215,15 +223,16 @@ const MembersPanel: React.FC = () => {
               </div>
               
               <div className={styles.formGroup}>
-                <label htmlFor="image">Bilde URL</label>
-                <input 
-                  type="text" 
-                  id="image" 
-                  name="image" 
-                  value={formData.image} 
-                  onChange={handleFormChange}
-                  placeholder="f.eks. /images/person.jpg"
+                <label>Bilde</label>
+                <ImageUploader 
+                  onImageUploaded={handleImageUploaded}
+                  folder="members"
                 />
+                {formData.image && (
+                  <div className={styles.imagePreview}>
+                    <img src={formData.image} alt="Preview" />
+                  </div>
+                )}
               </div>
               
               <div className={styles.formActions}>
