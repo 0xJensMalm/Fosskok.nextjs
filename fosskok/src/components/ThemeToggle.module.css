@@ -1,0 +1,33 @@
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--foreground);
+  transition: background-color 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.themeToggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .themeToggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.5s ease;
+}
+
+.iconRotate {
+  transform: rotate(360deg);
+}
