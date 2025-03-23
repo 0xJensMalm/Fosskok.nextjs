@@ -4,7 +4,14 @@ import { PrismaClient } from '@prisma/client';
 // exhausting your database connection limit.
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export const prisma = globalForPrisma.prisma || new PrismaClient();
+// Use a different client configuration for production (Vercel)
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    log: ['error', 'warn'],
+  });
+};
+
+export const prisma = globalForPrisma.prisma || prismaClientSingleton();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
