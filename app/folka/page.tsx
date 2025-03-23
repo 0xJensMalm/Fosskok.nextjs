@@ -15,59 +15,99 @@ interface Member {
 }
 
 // Generate a color based on the member's name (for placeholder)
-const getColorFromName = (name: string) => {
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFBE0B', 
-    '#FB5607', '#8338EC', '#3A86FF', '#06D6A0'
-  ];
+function getColorFromName(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
   
-  // Simple hash function to get consistent color for a name
-  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return colors[hash % colors.length];
-};
+  const hue = hash % 360;
+  return `hsl(${hue}, 70%, 35%)`;
+}
 
 // Member card component
-const MemberCard = ({ member }: { member: Member }) => {
+const MemberCard = ({ member, onClick }: { member: Member, onClick: (member: Member) => void }) => {
   const [imageError, setImageError] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  
-  const toggleExpand = () => {
-    setExpanded(!expanded);
-  };
   
   return (
-    <div className={`${styles.memberCard} ${expanded ? styles.expanded : ''}`}>
+    <div 
+      className={styles.memberSquare}
+      onClick={() => onClick(member)}
+    >
       <div 
-        className={styles.memberSquare}
-        onClick={toggleExpand}
+        className={styles.memberImageContainer}
+        style={imageError || !member.image_url ? { backgroundColor: getColorFromName(member.name) } : {}}
       >
-        <div 
-          className={styles.memberImageContainer}
-          style={imageError || !member.image_url ? { backgroundColor: getColorFromName(member.name) } : {}}
-        >
-          {!imageError && member.image_url ? (
-            <img 
-              src={member.image_url} 
-              alt={member.name} 
-              className={styles.memberImage}
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <div className={styles.memberInitials}>
-              {member.name.split(' ').map(n => n[0]).join('')}
-            </div>
-          )}
-          <div className={styles.memberOverlay}>
-            <h2 className={styles.memberName}>{member.name}</h2>
-            <p className={styles.memberRole}>{member.role}</p>
+        {!imageError && member.image_url ? (
+          <img 
+            src={member.image_url} 
+            alt={member.name} 
+            className={styles.memberImage}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className={styles.memberInitials}>
+            {member.name.split(' ').map(n => n[0]).join('')}
           </div>
+        )}
+        <div className={styles.memberOverlay}>
+          <h2 className={styles.memberName}>{member.name}</h2>
+          <p className={styles.memberRole}>{member.role}</p>
         </div>
       </div>
-      {expanded && (
-        <div className={styles.memberBioExpanded}>
+    </div>
+  );
+};
+
+// Modal component for member details
+const MemberModal = ({ member, onClose }: { member: Member, onClose: () => void }) => {
+  const [imageError, setImageError] = useState(false);
+  
+  // Close modal when clicking outside or pressing escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+  
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+        <button className={styles.closeButton} onClick={onClose}>×</button>
+        
+        <div className={styles.modalHeader}>
+          <div 
+            className={styles.modalImage}
+            style={imageError || !member.image_url ? { backgroundColor: getColorFromName(member.name) } : {}}
+          >
+            {!imageError && member.image_url ? (
+              <img 
+                src={member.image_url} 
+                alt={member.name} 
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className={styles.modalInitials}>
+                {member.name.split(' ').map(n => n[0]).join('')}
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.modalInfo}>
+            <h2>{member.name}</h2>
+            <p className={styles.modalRole}>{member.role}</p>
+          </div>
+        </div>
+        
+        <div className={styles.modalBio}>
           <p>{member.bio}</p>
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -76,6 +116,7 @@ export default function Folka() {
   const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
 
   // Fetch members from API
   useEffect(() => {
@@ -105,6 +146,18 @@ export default function Folka() {
     // This will prevent stuttering caused by frequent updates
   }, []);
 
+  const handleOpenModal = (member: Member) => {
+    setSelectedMember(member);
+    // Prevent scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  };
+  
+  const handleCloseModal = () => {
+    setSelectedMember(null);
+    // Restore scrolling
+    document.body.style.overflow = 'auto';
+  };
+
   return (
     <ContentContainer>
       <div className={styles.container}>
@@ -123,9 +176,20 @@ export default function Folka() {
         ) : (
           <div className={styles.membersGrid}>
             {members.map(member => (
-              <MemberCard key={member.id} member={member} />
+              <MemberCard 
+                key={member.id} 
+                member={member} 
+                onClick={handleOpenModal}
+              />
             ))}
           </div>
+        )}
+        
+        {selectedMember && (
+          <MemberModal 
+            member={selectedMember} 
+            onClose={handleCloseModal}
+          />
         )}
       </div>
     </ContentContainer>

@@ -25,17 +25,6 @@
   margin-top: 0.5rem;
 }
 
-.memberCard {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.memberCard.expanded {
-  z-index: 10;
-}
-
 .memberSquare {
   aspect-ratio: 1/1;
   position: relative;
@@ -69,14 +58,6 @@
   transform: scale(1.05);
 }
 
-.memberColorPlaceholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .memberInitials {
   font-size: 2.5rem;
   font-weight: 700;
@@ -107,38 +88,134 @@
   opacity: 0.9;
 }
 
-.memberBioExpanded {
-  background-color: var(--card-bg);
-  border-radius: 0 0 8px 8px;
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
   padding: 1rem;
-  margin-top: -5px;
-  box-shadow: 0 4px 12px var(--card-shadow);
-  animation: slideDown 0.3s ease-out;
-  border: 1px solid var(--divider);
-  border-top: none;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
 }
 
-.memberBioExpanded p {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
+.modalContent {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: var(--foreground);
+  color: var(--background);
+  border: none;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  transform: scale(1.1);
+  background-color: var(--accent);
+}
+
+.modalHeader {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--divider);
+}
+
+.modalImage {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modalInitials {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.modalInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modalInfo h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
   color: var(--foreground);
 }
 
-@keyframes slideDown {
-  from {
+.modalRole {
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin: 0;
+}
+
+.modalBio {
+  padding: 1.5rem;
+  color: var(--foreground);
+}
+
+.modalBio p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(20px);
   }
-  to {
+  to { 
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Dark mode adjustments */
-[data-theme="dark"] .memberOverlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0) 100%);
 }
 
 /* Mobile responsiveness */
@@ -156,12 +233,24 @@
     font-size: 0.8rem;
   }
   
-  .memberBioExpanded {
-    padding: 0.75rem;
+  .modalHeader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
   }
   
-  .memberBioExpanded p {
-    font-size: 0.85rem;
+  .modalImage {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .modalInfo h2 {
+    font-size: 1.5rem;
+  }
+  
+  .modalRole {
+    font-size: 1rem;
   }
 }
 
@@ -171,4 +260,29 @@
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 0.75rem;
   }
+  
+  .modalContent {
+    max-width: 100%;
+  }
+  
+  .modalHeader {
+    padding: 1rem;
+  }
+  
+  .modalBio {
+    padding: 1rem;
+  }
+  
+  .closeButton {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.25rem;
+  }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .memberOverlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0) 100%);
 }
