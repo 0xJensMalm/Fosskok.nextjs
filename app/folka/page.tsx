@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
-import { subscribeToCacheInvalidation, addCacheBuster } from '@/utils/cache-helpers';
+import { addCacheBuster } from '@/utils/cache-helpers';
 
 // Interface for Member type
 interface Member {
@@ -29,31 +29,45 @@ const getColorFromName = (name: string) => {
 // Member card component
 const MemberCard = ({ member }: { member: Member }) => {
   const [imageError, setImageError] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+  };
   
   return (
-    <div className={styles.memberSquare}>
+    <div className={`${styles.memberCard} ${expanded ? styles.expanded : ''}`}>
       <div 
-        className={styles.memberImageContainer}
-        style={imageError || !member.image_url ? { backgroundColor: getColorFromName(member.name) } : {}}
+        className={styles.memberSquare}
+        onClick={toggleExpand}
       >
-        {!imageError && member.image_url ? (
-          <img 
-            src={member.image_url} 
-            alt={member.name} 
-            className={styles.memberImage}
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className={styles.memberInitials}>
-            {member.name.split(' ').map(n => n[0]).join('')}
+        <div 
+          className={styles.memberImageContainer}
+          style={imageError || !member.image_url ? { backgroundColor: getColorFromName(member.name) } : {}}
+        >
+          {!imageError && member.image_url ? (
+            <img 
+              src={member.image_url} 
+              alt={member.name} 
+              className={styles.memberImage}
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className={styles.memberInitials}>
+              {member.name.split(' ').map(n => n[0]).join('')}
+            </div>
+          )}
+          <div className={styles.memberOverlay}>
+            <h2 className={styles.memberName}>{member.name}</h2>
+            <p className={styles.memberRole}>{member.role}</p>
           </div>
-        )}
-        <div className={styles.memberOverlay}>
-          <h2 className={styles.memberName}>{member.name}</h2>
-          <p className={styles.memberRole}>{member.role}</p>
-          <p className={styles.memberBio}>{member.bio}</p>
         </div>
       </div>
+      {expanded && (
+        <div className={styles.memberBioExpanded}>
+          <p>{member.bio}</p>
+        </div>
+      )}
     </div>
   );
 };
@@ -87,23 +101,8 @@ export default function Folka() {
     
     fetchMembers();
     
-    // Subscribe to cache invalidation events
-    const unsubscribe = subscribeToCacheInvalidation('members', () => {
-      console.log('Members cache invalidated, refreshing data...');
-      fetchMembers();
-    });
-    
-    // Set up periodic refresh (every 30 seconds)
-    const refreshInterval = setInterval(() => {
-      console.log('Periodic refresh of members data');
-      fetchMembers();
-    }, 30000);
-    
-    // Clean up subscriptions
-    return () => {
-      unsubscribe();
-      clearInterval(refreshInterval);
-    };
+    // Remove real-time subscription and periodic refresh
+    // This will prevent stuttering caused by frequent updates
   }, []);
 
   return (
@@ -111,7 +110,7 @@ export default function Folka() {
       <div className={styles.container}>
         {isLoading ? (
           <div className={styles.loadingContainer}>
-            <p>Laster inn teamet...</p>
+            <p>Laster inn folka...</p>
           </div>
         ) : error ? (
           <div className={styles.errorContainer}>
@@ -119,7 +118,7 @@ export default function Folka() {
           </div>
         ) : members.length === 0 ? (
           <div className={styles.emptyContainer}>
-            <p>Ingen teammedlemmer funnet</p>
+            <p>Ingen folk funnet</p>
           </div>
         ) : (
           <div className={styles.membersGrid}>
