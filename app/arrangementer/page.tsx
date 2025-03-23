@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
 import { subscribeToTableChanges, addCacheBuster } from '@/utils/supabase/realtime';
+import { createGoogleCalendarUrl } from '@/utils/calendar-helpers';
 
 // Interface for Event type
 interface Event {
@@ -111,6 +112,21 @@ export default function Arrangementer() {
                     <p className={styles.eventLocation}>{event.location}</p>
                     <p className={styles.eventDescription}>{event.description}</p>
                   </div>
+                  <a 
+                    href={createGoogleCalendarUrl(
+                      event.title,
+                      event.description,
+                      event.location,
+                      event.date
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.calendarButton}
+                    aria-label="Legg til i kalender"
+                    title="Legg til i kalender"
+                  >
+                    Legg til<br />kalender
+                  </a>
                 </div>
               );
             })}

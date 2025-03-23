@@ -23,17 +23,18 @@
 
 .eventCard {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
   border-radius: 8px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   background-color: var(--card-bg);
   box-shadow: 0 4px 12px var(--card-shadow);
+  position: relative;
 }
 
 .eventCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px var(--card-shadow);
+  transform: none;
+  box-shadow: 0 4px 12px var(--card-shadow);
 }
 
 .eventDate {
@@ -47,6 +48,7 @@
   color: var(--background);
   border-radius: 8px;
   padding: 0.5rem;
+  flex-shrink: 0;
 }
 
 .day {
@@ -66,6 +68,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
 }
 
 .eventDetails h3 {
@@ -88,6 +92,45 @@
   color: var(--foreground);
 }
 
+/* Calendar button styles */
+.calendarButton {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 50px;
+  background-color: white;
+  color: var(--foreground, #333);
+  border: 2px solid var(--foreground, #333);
+  border-radius: 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.3rem;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.calendarButton:hover {
+  background-color: white;
+  color: var(--foreground, #333);
+  transform: none;
+  box-shadow: none;
+}
+
+.calendarButton:active {
+  transform: none;
+  box-shadow: none;
+}
+
+.calendarIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 @media (max-width: 768px) {
   .eventsGrid {
     grid-template-columns: 1fr;
@@ -99,6 +142,33 @@
   }
   
   .eventCard {
-    padding: 1.25rem;
+    padding: 0.75rem 1.25rem 5rem 1.25rem; 
+  }
+  
+  .eventDate {
+    min-width: 60px;
+    height: 60px;
+  }
+  
+  .eventDetails {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .calendarButton {
+    bottom: 1.25rem;
+    left: 1.25rem;
+    width: 60px;
+    height: 45px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendarButton {
+    width: 60px;
+    height: 45px;
+    font-size: 0.65rem;
+    padding: 0.2rem;
   }
 }
