@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export type MemberParams = { params: { id: string } };
-
 // GET /api/members/[id] - Get a specific member
 export async function GET(
   request: NextRequest,
-  context: MemberParams
+  { params }: { params: { id: string } }
 ) {
   try {
     const member = await prisma.member.findUnique({
       where: {
-        id: context.params.id,
+        id: params.id,
       },
     });
     
@@ -35,7 +33,7 @@ export async function GET(
 // PUT /api/members/[id] - Update a member
 export async function PUT(
   request: NextRequest,
-  context: MemberParams
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -59,7 +57,7 @@ export async function PUT(
     
     const updatedMember = await prisma.member.update({
       where: {
-        id: context.params.id,
+        id: params.id,
       },
       data: {
         name: data.name,
@@ -82,7 +80,7 @@ export async function PUT(
 // DELETE /api/members/[id] - Delete a member
 export async function DELETE(
   request: NextRequest,
-  context: MemberParams
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -96,7 +94,7 @@ export async function DELETE(
 
     await prisma.member.delete({
       where: {
-        id: context.params.id,
+        id: params.id,
       },
     });
     

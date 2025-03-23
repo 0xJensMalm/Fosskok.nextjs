@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export type EventParams = { params: { id: string } };
-
 // GET /api/events/[id] - Get a specific event
 export async function GET(
   request: NextRequest,
-  context: EventParams
+  { params }: { params: { id: string } }
 ) {
   try {
     const event = await prisma.event.findUnique({
       where: {
-        id: context.params.id,
+        id: params.id,
       },
     });
     
@@ -35,7 +33,7 @@ export async function GET(
 // PUT /api/events/[id] - Update an event
 export async function PUT(
   request: NextRequest,
-  context: EventParams
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -59,7 +57,7 @@ export async function PUT(
     
     const updatedEvent = await prisma.event.update({
       where: {
-        id: context.params.id,
+        id: params.id,
       },
       data: {
         title: data.title,
@@ -82,7 +80,7 @@ export async function PUT(
 // DELETE /api/events/[id] - Delete an event
 export async function DELETE(
   request: NextRequest,
-  context: EventParams
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if user is authenticated
@@ -96,7 +94,7 @@ export async function DELETE(
 
     await prisma.event.delete({
       where: {
-        id: context.params.id,
+        id: params.id,
       },
     });
     
