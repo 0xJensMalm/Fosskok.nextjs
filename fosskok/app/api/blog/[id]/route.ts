@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+export type BlogParams = { params: { id: string } };
+
 // GET /api/blog/[id] - Get a specific blog post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: BlogParams
 ) {
   try {
     const blogPost = await prisma.blogPost.findUnique({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
     });
     
@@ -42,7 +44,7 @@ export async function GET(
 // PUT /api/blog/[id] - Update a blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: BlogParams
 ) {
   try {
     // Check if user is authenticated
@@ -53,7 +55,7 @@ export async function PUT(
         { status: 401 }
       );
     }
-
+    
     const data = await request.json();
     
     // Validate required fields
@@ -64,9 +66,9 @@ export async function PUT(
       );
     }
     
-    const blogPost = await prisma.blogPost.update({
+    const updatedBlogPost = await prisma.blogPost.update({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
       data: {
         title: data.title,
@@ -77,7 +79,7 @@ export async function PUT(
       },
     });
     
-    return NextResponse.json(blogPost);
+    return NextResponse.json(updatedBlogPost);
   } catch (error) {
     console.error('Error updating blog post:', error);
     return NextResponse.json(
@@ -90,7 +92,7 @@ export async function PUT(
 // DELETE /api/blog/[id] - Delete a blog post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: BlogParams
 ) {
   try {
     // Check if user is authenticated
@@ -104,7 +106,7 @@ export async function DELETE(
 
     await prisma.blogPost.delete({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
     });
     

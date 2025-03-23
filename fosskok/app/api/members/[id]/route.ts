@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+export type MemberParams = { params: { id: string } };
+
 // GET /api/members/[id] - Get a specific member
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: MemberParams
 ) {
   try {
     const member = await prisma.member.findUnique({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
     });
     
@@ -33,7 +35,7 @@ export async function GET(
 // PUT /api/members/[id] - Update a member
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: MemberParams
 ) {
   try {
     // Check if user is authenticated
@@ -55,9 +57,9 @@ export async function PUT(
       );
     }
     
-    const member = await prisma.member.update({
+    const updatedMember = await prisma.member.update({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
       data: {
         name: data.name,
@@ -67,7 +69,7 @@ export async function PUT(
       },
     });
     
-    return NextResponse.json(member);
+    return NextResponse.json(updatedMember);
   } catch (error) {
     console.error('Error updating member:', error);
     return NextResponse.json(
@@ -80,7 +82,7 @@ export async function PUT(
 // DELETE /api/members/[id] - Delete a member
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: MemberParams
 ) {
   try {
     // Check if user is authenticated
@@ -94,7 +96,7 @@ export async function DELETE(
 
     await prisma.member.delete({
       where: {
-        id: params.id,
+        id: context.params.id,
       },
     });
     
