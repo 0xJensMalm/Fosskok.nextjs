@@ -4,22 +4,56 @@
   margin: 0 auto;
   padding: 2rem;
   min-height: calc(100vh - 160px);
+  background-color: var(--background);
 }
 
 .adminTitle {
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: var(--foreground);
   text-align: center;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+
+.adminTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: var(--accent);
+  border-radius: 3px;
 }
 
 .adminContent {
   background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px var(--card-shadow);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--card-shadow);
   padding: 2rem;
   margin-top: 2rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.errorMessage {
+  background-color: var(--error-light);
+  color: var(--error);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+
+.errorIcon {
+  font-size: 1.5rem;
 }
 
 @media (max-width: 768px) {
@@ -34,5 +68,6 @@
   
   .adminContent {
     padding: 1.5rem;
+    margin-top: 1.5rem;
   }
 }

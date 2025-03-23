@@ -17,10 +17,12 @@ interface Member {
 
 const MembersPanel: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Form state for new/edit member
   const [formData, setFormData] = useState({
@@ -45,6 +47,7 @@ const MembersPanel: React.FC = () => {
         
         const data = await response.json();
         setMembers(data);
+        setFilteredMembers(data);
         setError(null);
       } catch (err) {
         console.error('Error fetching members:', err);
@@ -56,6 +59,22 @@ const MembersPanel: React.FC = () => {
     
     fetchMembers();
   }, []);
+  
+  // Filter members based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredMembers(members);
+      return;
+    }
+    
+    const query = searchQuery.toLowerCase();
+    const filtered = members.filter(member => 
+      member.name.toLowerCase().includes(query) || 
+      member.role.toLowerCase().includes(query)
+    );
+    
+    setFilteredMembers(filtered);
+  }, [searchQuery, members]);
   
   const handleSelectMember = (member: Member) => {
     setSelectedMember(member);
@@ -212,12 +231,28 @@ const MembersPanel: React.FC = () => {
       
       <div className={styles.panelContent}>
         <div className={styles.itemsList}>
+          <div className={styles.searchContainer}>
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="Søk etter medlemmer..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <span className={styles.searchIcon}>🔍</span>
+          </div>
+
           {isLoading && members.length === 0 ? (
             <div className={styles.loadingState}>Laster medlemmer...</div>
-          ) : members.length === 0 ? (
-            <div className={styles.emptyState}>Ingen medlemmer funnet</div>
+          ) : filteredMembers.length === 0 ? (
+            <div className={styles.emptyState}>
+              <span>👤</span>
+              <p>
+                {searchQuery ? 'Ingen medlemmer funnet med dette søket' : 'Ingen medlemmer funnet. Legg til ditt første medlem!'}
+              </p>
+            </div>
           ) : (
-            members.map(member => (
+            filteredMembers.map(member => (
               <div 
                 key={member.id} 
                 className={`${styles.itemCard} ${selectedMember?.id === member.id ? styles.selected : ''}`}
@@ -256,21 +291,36 @@ const MembersPanel: React.FC = () => {
                     onClick={handleEditMember}
                     disabled={isLoading}
                   >
-                    Rediger
+                    ✏️ Rediger
                   </button>
                   <button 
                     className={styles.deleteButton}
                     onClick={handleDelete}
                     disabled={isLoading}
                   >
-                    Slett
+                    🗑️ Slett
                   </button>
                 </div>
               </div>
               
               <div className={styles.detailsContent}>
-                <p><strong>Rolle:</strong> {selectedMember.role}</p>
-                <p><strong>Bio:</strong> {selectedMember.bio}</p>
+                <div className={styles.detailsInfo}>
+                  <div className={styles.detailsField}>
+                    <h4>Rolle</h4>
+                    <p>{selectedMember.role}</p>
+                  </div>
+                  <div className={styles.detailsField}>
+                    <h4>Bio</h4>
+                    <p>{selectedMember.bio}</p>
+                  </div>
+                  {selectedMember.createdAt && (
+                    <div className={styles.detailsField}>
+                      <h4>Lagt til</h4>
+                      <p>{new Date(selectedMember.createdAt).toLocaleDateString('no-NO')}</p>
+                    </div>
+                  )}
+                </div>
+                
                 {selectedMember.image_url && (
                   <div className={styles.detailsImage}>
                     <img src={selectedMember.image_url} alt={selectedMember.name} />
@@ -340,19 +390,20 @@ const MembersPanel: React.FC = () => {
                   onClick={() => setIsEditing(false)}
                   disabled={isLoading}
                 >
-                  Avbryt
+                  ❌ Avbryt
                 </button>
                 <button 
                   className={styles.saveButton}
                   onClick={handleSave}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Lagrer...' : 'Lagre'}
+                  {isLoading ? '⏳ Lagrer...' : '💾 Lagre'}
                 </button>
               </div>
             </div>
           ) : (
             <div className={styles.emptyState}>
+              <span>👈</span>
               <p>Velg et medlem fra listen eller legg til et nytt medlem</p>
             </div>
           )}

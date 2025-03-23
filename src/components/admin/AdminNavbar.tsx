@@ -38,18 +38,21 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ activePanel, setActivePanel }
           className={`${styles.navButton} ${activePanel === 'members' ? styles.active : ''}`}
           onClick={() => setActivePanel('members')}
         >
+          <span className={styles.navIcon}>👥</span>
           Medlemmer
         </button>
         <button 
           className={`${styles.navButton} ${activePanel === 'events' ? styles.active : ''}`}
           onClick={() => setActivePanel('events')}
         >
+          <span className={styles.navIcon}>📅</span>
           Arrangementer
         </button>
         <button 
           className={`${styles.navButton} ${activePanel === 'blog' ? styles.active : ''}`}
           onClick={() => setActivePanel('blog')}
         >
+          <span className={styles.navIcon}>📝</span>
           Blogginnlegg
         </button>
       </div>
@@ -57,6 +60,7 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ activePanel, setActivePanel }
         className={styles.logoutButton}
         onClick={handleLogout}
       >
+        <span className={styles.navIcon}>🚪</span>
         Logg ut
       </button>
     </nav>
