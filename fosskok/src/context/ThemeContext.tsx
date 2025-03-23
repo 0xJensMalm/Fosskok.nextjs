@@ -22,13 +22,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Effect to handle initial theme setup - only runs on client
   useEffect(() => {
-    // Get stored theme or use system preference
+    // Get stored theme or default to light
     const storedTheme = localStorage.getItem('fosskok-theme') as Theme | null;
     
     if (storedTheme) {
       setTheme(storedTheme);
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
+    } else {
+      // Always default to light mode
+      setTheme('light');
     }
     
     setMounted(true);
