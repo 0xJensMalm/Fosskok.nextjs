@@ -305,6 +305,13 @@
   color: var(--foreground);
 }
 
+.formDescription {
+  font-size: 0.9rem;
+  color: var(--foreground-muted);
+  margin: 0 0 0.75rem 0;
+  line-height: 1.4;
+}
+
 .formGroup input[type="text"],
 .formGroup input[type="url"],
 .formGroup input[type="datetime-local"],

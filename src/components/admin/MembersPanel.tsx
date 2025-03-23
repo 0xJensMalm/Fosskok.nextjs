@@ -373,6 +373,9 @@ const MembersPanel: React.FC = () => {
               
               <div className={styles.formGroup}>
                 <label>Bilde</label>
+                <p className={styles.formDescription}>
+                  Legg til et 400x400 bilde for best resultat. Vi har begrenset med lagringsplass på serveren 💸
+                </p>
                 <ImageUploader 
                   onImageUploaded={handleImageUploaded}
                   folder="members"
