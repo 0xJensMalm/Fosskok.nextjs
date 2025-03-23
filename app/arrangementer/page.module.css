@@ -23,12 +23,12 @@
 
 .eventCard {
   display: flex;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 1.5rem;
+  padding: 1.5rem;
   border-radius: 8px;
   background-color: var(--card-bg);
   box-shadow: 0 4px 12px var(--card-shadow);
-  height: 130px;
+  height: 180px;
   overflow: hidden;
   margin-bottom: 1.5rem;
 }

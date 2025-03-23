@@ -149,7 +149,7 @@ export default function Home() {
                       </div>
                       <div className={styles.eventDetails}>
                         <h3>{event.title}</h3>
-                        <p className={styles.eventTime}>{event.location} - {formattedDate.time}</p>
+                        <p className={styles.eventTime}>{event.location}</p>
                       </div>
                     </div>
                   );
