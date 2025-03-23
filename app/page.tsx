@@ -75,10 +75,9 @@ export default function Home() {
         <div className={styles.mainContent}>
           <h1 className={styles.title}>Velkommen til Fosskok</h1>
           <p className={styles.description}>
-            Et kunstkollektiv dedikert til kreativitet og fellesskap.
+          Fosskok åpner dørene for kultur og fellesskap i Lørenskog
           </p>
           <div className={styles.introText}>
-            <h2>Fosskok åpner dørene for kultur og fellesskap i Lørenskog</h2>
             <p>
               Sommeren 2017 stod barndomshjemmet til Bendik tomt, en gyllen anledning til å samle gode venner 
               og lage en festival i hagen! Alle bidro med det de kunne, og med god dugnadsånd skapte de en 
