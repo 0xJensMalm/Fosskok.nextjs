@@ -23,13 +23,15 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
+        credentials: 'include', // Important for cookies
       });
 
+      const data = await response.json();
+      
       if (response.ok) {
-        // Successful login
-        router.push('/admin');
+        // Successful login - force a hard refresh to ensure cookie is recognized
+        window.location.href = '/admin';
       } else {
-        const data = await response.json();
         setError(data.message || 'Feil brukernavn eller passord');
       }
     } catch (err) {

@@ -8,6 +8,10 @@ export async function POST(request: NextRequest) {
     const validUsername = process.env.ADMIN_USERNAME || 'admin';
     const validPassword = process.env.ADMIN_PASSWORD || 'fosskok2025';
     
+    // Debug log credentials (without showing actual password)
+    console.log(`Attempting login with username: ${username}, valid username: ${validUsername}`);
+    console.log(`Password match: ${password === validPassword}`);
+    
     // Simple authentication check
     if (username === validUsername && password === validPassword) {
       // Create response
@@ -21,12 +25,15 @@ export async function POST(request: NextRequest) {
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24, // 1 day
         path: '/',
+        sameSite: 'lax',
       });
       
+      console.log('Authentication successful, cookie set');
       return response;
     }
     
     // Authentication failed
+    console.log('Authentication failed: invalid credentials');
     return NextResponse.json(
       { success: false, message: 'Feil brukernavn eller passord' },
       { status: 401 }

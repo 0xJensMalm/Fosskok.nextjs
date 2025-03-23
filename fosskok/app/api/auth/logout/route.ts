@@ -8,6 +8,7 @@ export async function POST() {
     // Clear the auth cookie
     response.cookies.delete('fosskok-auth');
     
+    console.log('Logout successful, cookie deleted');
     return response;
   } catch (error) {
     console.error('Logout error:', error);

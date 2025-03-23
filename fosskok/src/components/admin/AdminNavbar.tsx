@@ -19,11 +19,12 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ activePanel, setActivePanel }
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (response.ok) {
-        // Redirect to login page after logout
-        router.push('/admin/login');
+        // Force a hard refresh to ensure cookie is cleared
+        window.location.href = '/admin/login';
       }
     } catch (err) {
       console.error('Logout error:', err);
