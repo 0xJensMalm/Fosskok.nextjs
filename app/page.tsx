@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Link from "next/link";
 import ContentContainer from "../src/components/ContentContainer";
+import { createGoogleCalendarUrl } from '@/utils/calendar-helpers';
 
 // Interface for Event type
 interface Event {
@@ -125,9 +126,26 @@ export default function Home() {
                   
                   return (
                     <div key={event.id} className={styles.eventCard}>
-                      <div className={styles.eventDate}>
-                        <span className={styles.day}>{formattedDate.day}</span>
-                        <span className={styles.month}>{formattedDate.month}</span>
+                      <div className={styles.eventDateContainer}>
+                        <div className={styles.eventDate}>
+                          <span className={styles.day}>{formattedDate.day}</span>
+                          <span className={styles.month}>{formattedDate.month}</span>
+                        </div>
+                        <a 
+                          href={createGoogleCalendarUrl(
+                            event.title,
+                            event.description,
+                            event.location,
+                            event.date
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.calendarButton}
+                          aria-label="Legg til i kalender"
+                          title="Legg til i kalender"
+                        >
+                          Legg til
+                        </a>
                       </div>
                       <div className={styles.eventDetails}>
                         <h3>{event.title}</h3>

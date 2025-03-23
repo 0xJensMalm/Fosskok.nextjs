@@ -23,18 +23,24 @@
 
 .eventCard {
   display: flex;
-  flex-wrap: wrap;
   gap: 1.5rem;
-  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  padding: 1.5rem;
   border-radius: 8px;
   background-color: var(--card-bg);
   box-shadow: 0 4px 12px var(--card-shadow);
   position: relative;
+  height: 180px; /* Fixed height for all cards */
+  overflow: hidden;
 }
 
 .eventCard:hover {
   transform: none;
-  box-shadow: 0 4px 12px var(--card-shadow);
+  box-shadow: 0 6px 16px var(--card-shadow);
+}
+
+.eventDateContainer {
+  position: relative;
+  flex-shrink: 0;
 }
 
 .eventDate {
@@ -42,11 +48,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 70px;
+  width: 70px;
   height: 70px;
   background-color: var(--foreground);
   color: var(--background);
-  border-radius: 8px;
+  border-radius: 8px 8px 0 0;
   padding: 0.5rem;
   flex-shrink: 0;
 }
@@ -64,12 +70,37 @@
   margin-top: 0.25rem;
 }
 
+.calendarButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 35px;
+  background-color: white;
+  color: var(--foreground, #333);
+  border: 2px solid var(--foreground, #333);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.3rem;
+  text-align: center;
+  line-height: 1;
+}
+
+.calendarButton:hover {
+  background-color: var(--foreground);
+  color: white;
+}
+
 .eventDetails {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   flex: 1;
   min-width: 0; /* Prevents flex items from overflowing */
+  overflow: hidden;
 }
 
 .eventDetails h3 {
@@ -77,12 +108,18 @@
   font-weight: 600;
   margin-bottom: 0.25rem;
   color: var(--foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .eventLocation {
   font-size: 0.9rem;
   color: var(--accent);
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .eventDescription {
@@ -90,45 +127,21 @@
   line-height: 1.6;
   margin-top: 0.5rem;
   color: var(--foreground);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* Calendar button styles */
-.calendarButton {
-  position: absolute;
-  bottom: 1.5rem;
-  left: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 70px;
-  height: 50px;
-  background-color: white;
-  color: var(--foreground, #333);
-  border: 2px solid var(--foreground, #333);
-  border-radius: 0;
-  font-size: 0.7rem;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 0.3rem;
+.loadingContainer,
+.errorContainer,
+.emptyContainer {
   text-align: center;
-  line-height: 1.2;
-}
-
-.calendarButton:hover {
-  background-color: white;
-  color: var(--foreground, #333);
-  transform: none;
-  box-shadow: none;
-}
-
-.calendarButton:active {
-  transform: none;
-  box-shadow: none;
-}
-
-.calendarIcon {
-  width: 1.5rem;
-  height: 1.5rem;
+  padding: 2rem;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--card-shadow);
 }
 
 @media (max-width: 768px) {
@@ -142,32 +155,35 @@
   }
   
   .eventCard {
-    padding: 0.75rem 1.25rem 5rem 1.25rem; 
+    padding: 1.25rem;
+    height: 160px;
   }
   
   .eventDate {
-    min-width: 60px;
+    width: 60px;
     height: 60px;
+  }
+  
+  .calendarButton {
+    width: 60px;
+    height: 30px;
+    font-size: 0.65rem;
   }
   
   .eventDetails {
     flex: 1;
     min-width: 0;
   }
-  
-  .calendarButton {
-    bottom: 1.25rem;
-    left: 1.25rem;
-    width: 60px;
-    height: 45px;
-    font-size: 0.65rem;
-  }
 }
 
 @media (max-width: 480px) {
+  .eventCard {
+    height: 180px;
+  }
+  
   .calendarButton {
     width: 60px;
-    height: 45px;
+    height: 30px;
     font-size: 0.65rem;
     padding: 0.2rem;
   }
