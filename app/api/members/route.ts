@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 // GET /api/members - Get all members
 export async function GET() {
@@ -51,7 +52,10 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const supabase = await createClient();
+    // Use the admin client to bypass RLS policies
+    const supabase = await createAdminClient();
+    
+    console.log(`Attempting to create a new member using admin client`);
     
     const { data: member, error } = await supabase
       .from('members')
@@ -59,7 +63,7 @@ export async function POST(request: NextRequest) {
         name: data.name,
         role: data.role,
         bio: data.bio,
-        image: data.image || null,
+        image_url: data.image || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })

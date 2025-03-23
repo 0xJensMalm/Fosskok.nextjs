@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -73,7 +74,10 @@ export async function PUT(
       );
     }
     
-    const supabase = await createClient();
+    // Use the admin client to bypass RLS policies
+    const supabase = await createAdminClient();
+    
+    console.log(`Attempting to update blog post with ID: ${id} using admin client`);
     
     // Update blog post
     const { data: updatedBlogPost, error } = await supabase
@@ -124,7 +128,10 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    const supabase = await createClient();
+    // Use the admin client to bypass RLS policies
+    const supabase = await createAdminClient();
+    
+    console.log(`Attempting to delete blog post with ID: ${id} using admin client`);
     
     // Delete blog post
     const { error } = await supabase

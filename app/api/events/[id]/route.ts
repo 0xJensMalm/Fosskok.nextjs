@@ -65,7 +65,10 @@ export async function PUT(
       );
     }
     
-    const supabase = await createClient();
+    // Use the admin client to bypass RLS policies
+    const supabase = await createAdminClient();
+    
+    console.log(`Attempting to update event with ID: ${id} using admin client`);
     
     const { data: updatedEvent, error } = await supabase
       .from('events')

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 // GET /api/blog - Get all blog posts
 export async function GET(request: NextRequest) {
@@ -62,7 +63,10 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const supabase = await createClient();
+    // Use the admin client to bypass RLS policies
+    const supabase = await createAdminClient();
+    
+    console.log(`Attempting to create a new blog post using admin client`);
     
     const { data: blogPost, error } = await supabase
       .from('blog_posts')
