@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
 type RouteParams = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
 
 // GET /api/blog/[id] - Get a specific blog post
@@ -15,10 +13,12 @@ export async function GET(
   try {
     const supabase = await createClient();
     
+    const { id } = await params;
+    
     const { data: blogPost, error } = await supabase
       .from('blog_posts')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
     
     if (error || !blogPost) {
@@ -61,7 +61,8 @@ export async function PUT(
         { status: 401 }
       );
     }
-    
+
+    const { id } = await params;
     const data = await request.json();
     
     // Validate required fields
@@ -74,6 +75,7 @@ export async function PUT(
     
     const supabase = await createClient();
     
+    // Update blog post
     const { data: updatedBlogPost, error } = await supabase
       .from('blog_posts')
       .update({
@@ -84,7 +86,7 @@ export async function PUT(
         published: data.published,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
     
@@ -121,12 +123,14 @@ export async function DELETE(
       );
     }
 
+    const { id } = await params;
     const supabase = await createClient();
     
+    // Delete blog post
     const { error } = await supabase
       .from('blog_posts')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
     
     if (error) {
       console.error('Error deleting blog post:', error);

@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
 type RouteParams = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
 
 // GET /api/members/[id] - Get a specific member
@@ -15,10 +13,12 @@ export async function GET(
   try {
     const supabase = await createClient();
     
+    const { id } = await params;
+    
     const { data: member, error } = await supabase
       .from('members')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
     
     if (error || !member) {
@@ -53,6 +53,7 @@ export async function PUT(
       );
     }
 
+    const { id } = await params;
     const data = await request.json();
     
     // Validate required fields
@@ -74,7 +75,7 @@ export async function PUT(
         image: data.image,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
     
@@ -111,12 +112,13 @@ export async function DELETE(
       );
     }
 
+    const { id } = await params;
     const supabase = await createClient();
     
     const { error } = await supabase
       .from('members')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
     
     if (error) {
       console.error('Error deleting member:', error);
