@@ -35,10 +35,10 @@ export default function PraktiskInfoPage() {
               <h3 className={styles.transportTitle}>Transport</h3>
               <ul className={styles.transportList}>
                 <li>
-                  <strong>Kollektivtransport:</strong> Buss 100, 110, 301 til Lørenskog sentrum
+                  <strong>Kollektivtransport:</strong> Buss 110 stopper rett nede på veien. Går ofte og sent. 
                 </li>
                 <li>
-                  <strong>Bil:</strong> Parkering tilgjengelig ved bygget
+                  <strong>Bil:</strong> Stor parkeringsplass tilknyttet kirken rett på nedsiden av huset.
                 </li>
               </ul>
             </div>
