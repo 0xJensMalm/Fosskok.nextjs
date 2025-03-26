@@ -1,8 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './AdminPanels.module.css';
-import featureFlags from '../../../utils/featureFlags';
 
 interface FeatureFlag {
   key: string;
@@ -10,114 +9,150 @@ interface FeatureFlag {
   description: string;
 }
 
-const FeatureFlagsPanel = () => {
+const FeatureFlagsPanel: React.FC = () => {
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
-  // Descriptions for each feature flag
-  const flagDescriptions: Record<string, string> = {
-    enableGrytaPage: 'Show the Gryta page in navigation',
-    enableMerchPage: 'Show the Merch page in navigation',
-    enableBlogSection: 'Enable the blog section functionality',
-    enableEventsSection: 'Enable the events section functionality',
-    enableMembersSection: 'Enable the members section functionality',
-    enableImageUpload: 'Allow image uploads in admin panels',
-  };
-
+  // Fetch feature flags on component mount
   useEffect(() => {
-    // Convert feature flags object to array with descriptions
-    const flagsArray = Object.entries(featureFlags).map(([key, value]) => ({
-      key,
-      value,
-      description: flagDescriptions[key] || key,
-    }));
-    
-    setFlags(flagsArray);
-    setIsLoading(false);
+    const fetchFlags = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/feature-flags', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch feature flags');
+        }
+
+        const data = await response.json();
+        
+        // Use the raw data which includes descriptions
+        if (data.rawData && Array.isArray(data.rawData)) {
+          setFlags(data.rawData);
+        } else {
+          // Fallback to just the flags object if rawData is not available
+          const flagsArray = Object.entries(data.flags || {}).map(([key, value]) => ({
+            key,
+            value: value as boolean,
+            description: getDefaultDescription(key),
+          }));
+          setFlags(flagsArray);
+        }
+      } catch (error) {
+        console.error('Error fetching feature flags:', error);
+        setMessage({
+          text: 'Failed to load feature flags. Please try again.',
+          type: 'error',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFlags();
   }, []);
 
-  const handleToggle = async (index: number) => {
+  // Helper function to get default descriptions for flags
+  const getDefaultDescription = (key: string): string => {
+    switch (key) {
+      case 'enableGrytaPage':
+        return 'Show the Gryta page in navigation';
+      case 'enableMerchPage':
+        return 'Show the Merch page in navigation';
+      default:
+        return 'No description available';
+    }
+  };
+
+  // Handle toggle of a feature flag
+  const handleToggle = async (key: string, currentValue: boolean) => {
     try {
-      const updatedFlags = [...flags];
-      updatedFlags[index].value = !updatedFlags[index].value;
-      setFlags(updatedFlags);
-
-      // Prepare data for API call
-      const flagData = {
-        key: updatedFlags[index].key,
-        value: updatedFlags[index].value
-      };
-
-      // Call API to update feature flag
+      setMessage(null);
+      
       const response = await fetch('/api/feature-flags', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(flagData),
-        credentials: 'include'
+        body: JSON.stringify({
+          key,
+          value: !currentValue,
+        }),
+        credentials: 'include',
       });
 
-      if (response.ok) {
-        setMessage({ 
-          text: `Feature flag "${updatedFlags[index].key}" updated successfully`, 
-          type: 'success' 
-        });
-      } else {
-        // Revert the change if the API call fails
-        updatedFlags[index].value = !updatedFlags[index].value;
-        setFlags(updatedFlags);
-        setMessage({ 
-          text: 'Failed to update feature flag', 
-          type: 'error' 
-        });
+      if (!response.ok) {
+        throw new Error('Failed to update feature flag');
       }
+
+      const data = await response.json();
+      
+      // Update the local state with the new value
+      setFlags(prevFlags =>
+        prevFlags.map(flag =>
+          flag.key === key ? { ...flag, value: !currentValue } : flag
+        )
+      );
+
+      setMessage({
+        text: `Feature flag ${key} updated successfully`,
+        type: 'success',
+      });
     } catch (error) {
       console.error('Error updating feature flag:', error);
-      setMessage({ 
-        text: 'An error occurred while updating the feature flag', 
-        type: 'error' 
+      setMessage({
+        text: 'Failed to update feature flag. Please try again.',
+        type: 'error',
       });
     }
-
-    // Clear message after 3 seconds
-    setTimeout(() => {
-      setMessage({ text: '', type: '' });
-    }, 3000);
   };
 
-  if (isLoading) {
-    return <div className={styles.loadingContainer}>Loading feature flags...</div>;
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        Loading feature flags...
+      </div>
+    );
   }
 
   return (
     <div className={styles.panelContainer}>
       <h2 className={styles.panelTitle}>Feature Flags</h2>
       
-      {message.text && (
+      {message && (
         <div className={`${styles.message} ${styles[message.type]}`}>
           {message.text}
         </div>
       )}
-
+      
       <div className={styles.flagsContainer}>
-        {flags.map((flag, index) => (
-          <div key={flag.key} className={styles.flagItem}>
-            <div className={styles.flagInfo}>
-              <span className={styles.flagName}>{flag.key}</span>
-              <p className={styles.flagDescription}>{flag.description}</p>
+        {flags.length === 0 ? (
+          <p>No feature flags available.</p>
+        ) : (
+          flags.map(flag => (
+            <div key={flag.key} className={styles.flagItem}>
+              <div className={styles.flagInfo}>
+                <span className={styles.flagName}>{flag.key}</span>
+                <p className={styles.flagDescription}>{flag.description}</p>
+              </div>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={flag.value}
+                  onChange={() => handleToggle(flag.key, flag.value)}
+                />
+                <span className={styles.slider}></span>
+              </label>
             </div>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={flag.value}
-                onChange={() => handleToggle(index)}
-              />
-              <span className={styles.slider}></span>
-            </label>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

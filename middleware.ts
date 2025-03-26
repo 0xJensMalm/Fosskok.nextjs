@@ -1,16 +1,40 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import featureFlags from './utils/featureFlags';
+import { createClient } from './utils/supabase/client';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Check if the path is for disabled feature pages
-  if (
-    (!featureFlags.enableGrytaPage && request.nextUrl.pathname === '/gryta') ||
-    (!featureFlags.enableMerchPage && request.nextUrl.pathname === '/merch')
-  ) {
-    // Redirect to home page if trying to access disabled features
-    const homeUrl = new URL('/', request.url);
-    return NextResponse.redirect(homeUrl);
+  if (request.nextUrl.pathname === '/gryta' || request.nextUrl.pathname === '/merch') {
+    // Initialize Supabase client
+    const supabase = createClient();
+    
+    // Get feature flags from the database
+    const { data, error } = await supabase
+      .from('feature_flags')
+      .select('key, value')
+      .in('key', ['enableGrytaPage', 'enableMerchPage']);
+      
+    if (error) {
+      console.error('Error fetching feature flags:', error);
+      // If there's an error, default to allowing access
+      return NextResponse.next();
+    }
+    
+    // Convert to a map for easier access
+    const flagsMap = data.reduce<Record<string, boolean>>((acc, flag) => {
+      acc[flag.key] = flag.value;
+      return acc;
+    }, {});
+    
+    // Check if the specific page is disabled
+    if (
+      (request.nextUrl.pathname === '/gryta' && !flagsMap.enableGrytaPage) ||
+      (request.nextUrl.pathname === '/merch' && !flagsMap.enableMerchPage)
+    ) {
+      // Redirect to home page if trying to access disabled features
+      const homeUrl = new URL('/', request.url);
+      return NextResponse.redirect(homeUrl);
+    }
   }
 
   // Check if the path is for the admin area (but not the login page)

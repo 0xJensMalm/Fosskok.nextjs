@@ -9,14 +9,6 @@ const featureFlags = {
   // Page visibility flags
   enableGrytaPage: false,
   enableMerchPage: false,
-  
-  // Feature flags
-  enableBlogSection: true,
-  enableEventsSection: true,
-  enableMembersSection: true,
-  
-  // Admin features
-  enableImageUpload: true,
 };
 
 export default featureFlags;

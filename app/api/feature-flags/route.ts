@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { createClient } from '../../../utils/supabase/client';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,22 +17,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Feature flag key is required' }, { status: 400 });
     }
 
-    // Path to the feature flags file
-    const filePath = path.join(process.cwd(), 'utils', 'featureFlags.js');
+    // Initialize Supabase client
+    const supabase = createClient();
 
-    // Read the current feature flags file
-    let fileContent = fs.readFileSync(filePath, 'utf-8');
+    // Update the feature flag in the database
+    const { error } = await supabase
+      .from('feature_flags')
+      .update({ value, updated_at: new Date().toISOString() })
+      .eq('key', key);
 
-    // Create a regex pattern to match the specific flag
-    const pattern = new RegExp(`(${key}:\\s*)([a-z]+)`, 'g');
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: 'Failed to update feature flag' }, { status: 500 });
+    }
 
-    // Replace the value in the file content
-    const updatedContent = fileContent.replace(pattern, `$1${value}`);
-
-    // Write the updated content back to the file
-    fs.writeFileSync(filePath, updatedContent, 'utf-8');
-
-    return NextResponse.json({ success: true, message: `Feature flag ${key} updated successfully` });
+    return NextResponse.json({ 
+      success: true, 
+      message: `Feature flag ${key} updated successfully`,
+      key,
+      value
+    });
   } catch (error) {
     console.error('Error updating feature flag:', error);
     return NextResponse.json({ error: 'Failed to update feature flag' }, { status: 500 });
@@ -48,24 +51,27 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Path to the feature flags file
-    const filePath = path.join(process.cwd(), 'utils', 'featureFlags.js');
+    // Initialize Supabase client
+    const supabase = createClient();
 
-    // Read the current feature flags file
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    // Get all feature flags from the database
+    const { data, error } = await supabase
+      .from('feature_flags')
+      .select('key, value, description')
+      .order('id');
 
-    // Extract feature flags using regex
-    const flagsRegex = /(\w+):\s*([a-z]+)/g;
-    const flags: Record<string, boolean> = {};
-    
-    let match;
-    while ((match = flagsRegex.exec(fileContent)) !== null) {
-      const key = match[1];
-      const value = match[2] === 'true';
-      flags[key] = value;
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: 'Failed to get feature flags' }, { status: 500 });
     }
 
-    return NextResponse.json({ flags });
+    // Convert to the expected format
+    const flags = data.reduce<Record<string, boolean>>((acc, flag) => {
+      acc[flag.key] = flag.value;
+      return acc;
+    }, {});
+
+    return NextResponse.json({ flags, rawData: data });
   } catch (error) {
     console.error('Error getting feature flags:', error);
     return NextResponse.json({ error: 'Failed to get feature flags' }, { status: 500 });

@@ -1,15 +1,62 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { createClient } from '../../utils/supabase/client';
 import styles from './Navbar.module.css';
 import ThemeToggle from './ThemeToggle';
-import featureFlags from '../../utils/featureFlags';
+
+interface FeatureFlags {
+  enableGrytaPage: boolean;
+  enableMerchPage: boolean;
+}
 
 const Navbar = () => {
-  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlags>({
+    enableGrytaPage: false,
+    enableMerchPage: false
+  });
+  const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const fetchFeatureFlags = async () => {
+      try {
+        setLoading(true);
+        const supabase = createClient();
+        
+        // Get feature flags from the database
+        const { data, error } = await supabase
+          .from('feature_flags')
+          .select('key, value')
+          .in('key', ['enableGrytaPage', 'enableMerchPage']);
+          
+        if (error) {
+          console.error('Error fetching feature flags:', error);
+          return;
+        }
+        
+        // Convert to the expected format
+        const flags = data.reduce<FeatureFlags>((acc, flag) => {
+          acc[flag.key as keyof FeatureFlags] = flag.value;
+          return acc;
+        }, {
+          enableGrytaPage: false,
+          enableMerchPage: false
+        });
+        
+        setFeatureFlags(flags);
+      } catch (error) {
+        console.error('Error fetching feature flags:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeatureFlags();
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -29,15 +76,21 @@ const Navbar = () => {
           <Link href="/folka" className={styles.navLink} aria-current={pathname === '/folka' ? 'page' : undefined}>
             Folka
           </Link>
-          {featureFlags.enableGrytaPage && (
-            <Link href="/gryta" className={styles.navLink} aria-current={pathname === '/gryta' ? 'page' : undefined}>
-              Gryta
-            </Link>
-          )}
-          {featureFlags.enableMerchPage && (
-            <Link href="/merch" className={styles.navLink} aria-current={pathname === '/merch' ? 'page' : undefined}>
-              Merch
-            </Link>
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              {featureFlags.enableGrytaPage && (
+                <Link href="/gryta" className={styles.navLink} aria-current={pathname === '/gryta' ? 'page' : undefined}>
+                  Gryta
+                </Link>
+              )}
+              {featureFlags.enableMerchPage && (
+                <Link href="/merch" className={styles.navLink} aria-current={pathname === '/merch' ? 'page' : undefined}>
+                  Merch
+                </Link>
+              )}
+            </>
           )}
           <Link href="/praktisk-info" className={styles.navLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined}>
             Praktisk info
@@ -85,15 +138,21 @@ const Navbar = () => {
           <Link href="/folka" className={styles.mobileNavLink} aria-current={pathname === '/folka' ? 'page' : undefined} onClick={toggleMobileMenu}>
             Folka
           </Link>
-          {featureFlags.enableGrytaPage && (
-            <Link href="/gryta" className={styles.mobileNavLink} aria-current={pathname === '/gryta' ? 'page' : undefined} onClick={toggleMobileMenu}>
-              Gryta
-            </Link>
-          )}
-          {featureFlags.enableMerchPage && (
-            <Link href="/merch" className={styles.mobileNavLink} aria-current={pathname === '/merch' ? 'page' : undefined} onClick={toggleMobileMenu}>
-              Merch
-            </Link>
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              {featureFlags.enableGrytaPage && (
+                <Link href="/gryta" className={styles.mobileNavLink} aria-current={pathname === '/gryta' ? 'page' : undefined} onClick={toggleMobileMenu}>
+                  Gryta
+                </Link>
+              )}
+              {featureFlags.enableMerchPage && (
+                <Link href="/merch" className={styles.mobileNavLink} aria-current={pathname === '/merch' ? 'page' : undefined} onClick={toggleMobileMenu}>
+                  Merch
+                </Link>
+              )}
+            </>
           )}
           <Link href="/praktisk-info" className={styles.mobileNavLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined} onClick={toggleMobileMenu}>
             Praktisk info
