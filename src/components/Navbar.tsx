@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
 import ThemeToggle from './ThemeToggle';
+import featureFlags from '../../utils/featureFlags';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -28,12 +29,16 @@ const Navbar = () => {
           <Link href="/folka" className={styles.navLink} aria-current={pathname === '/folka' ? 'page' : undefined}>
             Folka
           </Link>
-          <Link href="/gryta" className={styles.navLink} aria-current={pathname === '/gryta' ? 'page' : undefined}>
-            Gryta
-          </Link>
-          <Link href="/merch" className={styles.navLink} aria-current={pathname === '/merch' ? 'page' : undefined}>
-            Merch
-          </Link>
+          {featureFlags.enableGrytaPage && (
+            <Link href="/gryta" className={styles.navLink} aria-current={pathname === '/gryta' ? 'page' : undefined}>
+              Gryta
+            </Link>
+          )}
+          {featureFlags.enableMerchPage && (
+            <Link href="/merch" className={styles.navLink} aria-current={pathname === '/merch' ? 'page' : undefined}>
+              Merch
+            </Link>
+          )}
           <Link href="/praktisk-info" className={styles.navLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined}>
             Praktisk info
           </Link>
@@ -80,12 +85,16 @@ const Navbar = () => {
           <Link href="/folka" className={styles.mobileNavLink} aria-current={pathname === '/folka' ? 'page' : undefined} onClick={toggleMobileMenu}>
             Folka
           </Link>
-          <Link href="/gryta" className={styles.mobileNavLink} aria-current={pathname === '/gryta' ? 'page' : undefined} onClick={toggleMobileMenu}>
-            Gryta
-          </Link>
-          <Link href="/merch" className={styles.mobileNavLink} aria-current={pathname === '/merch' ? 'page' : undefined} onClick={toggleMobileMenu}>
-            Merch
-          </Link>
+          {featureFlags.enableGrytaPage && (
+            <Link href="/gryta" className={styles.mobileNavLink} aria-current={pathname === '/gryta' ? 'page' : undefined} onClick={toggleMobileMenu}>
+              Gryta
+            </Link>
+          )}
+          {featureFlags.enableMerchPage && (
+            <Link href="/merch" className={styles.mobileNavLink} aria-current={pathname === '/merch' ? 'page' : undefined} onClick={toggleMobileMenu}>
+              Merch
+            </Link>
+          )}
           <Link href="/praktisk-info" className={styles.mobileNavLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined} onClick={toggleMobileMenu}>
             Praktisk info
           </Link>

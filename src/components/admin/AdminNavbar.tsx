@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import styles from './AdminNavbar.module.css';
 
 interface AdminNavbarProps {
-  activePanel: 'members' | 'events' | 'blog';
-  setActivePanel: (panel: 'members' | 'events' | 'blog') => void;
+  activePanel: 'members' | 'events' | 'blog' | 'featureFlags';
+  setActivePanel: (panel: 'members' | 'events' | 'blog' | 'featureFlags') => void;
 }
 
 const AdminNavbar: React.FC<AdminNavbarProps> = ({ activePanel, setActivePanel }) => {
@@ -54,6 +54,13 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ activePanel, setActivePanel }
         >
           <span className={styles.navIcon}>📝</span>
           Blogginnlegg
+        </button>
+        <button 
+          className={`${styles.navButton} ${activePanel === 'featureFlags' ? styles.active : ''}`}
+          onClick={() => setActivePanel('featureFlags')}
+        >
+          <span className={styles.navIcon}>🚩</span>
+          Funksjoner
         </button>
       </div>
       <button 

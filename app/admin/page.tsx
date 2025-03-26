@@ -6,9 +6,10 @@ import AdminNavbar from '../../src/components/admin/AdminNavbar';
 import MembersPanel from '../../src/components/admin/MembersPanel';
 import EventsPanel from '../../src/components/admin/EventsPanel';
 import BlogPanel from '../../src/components/admin/BlogPanel';
+import FeatureFlagsPanel from '../../src/components/admin/FeatureFlagsPanel';
 
 export default function AdminPage() {
-  const [activePanel, setActivePanel] = useState<'members' | 'events' | 'blog'>('members');
+  const [activePanel, setActivePanel] = useState<'members' | 'events' | 'blog' | 'featureFlags'>('members');
 
   return (
     <div className={styles.adminContainer}>
@@ -20,6 +21,7 @@ export default function AdminPage() {
         {activePanel === 'members' && <MembersPanel />}
         {activePanel === 'events' && <EventsPanel />}
         {activePanel === 'blog' && <BlogPanel />}
+        {activePanel === 'featureFlags' && <FeatureFlagsPanel />}
       </div>
     </div>
   );
