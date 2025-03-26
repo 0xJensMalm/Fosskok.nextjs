@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
 import { addCacheBuster } from '@/utils/cache-helpers';
+import { track } from '@vercel/analytics';
 
 // Interface for Member type
 interface Member {
@@ -29,10 +30,22 @@ function getColorFromName(name: string) {
 const MemberCard = ({ member, onClick }: { member: Member, onClick: (member: Member) => void }) => {
   const [imageError, setImageError] = useState(false);
   
+  const handleClick = () => {
+    // Track member click event
+    track('member_click', { 
+      member_id: member.id,
+      member_name: member.name,
+      member_role: member.role
+    });
+    
+    // Call the original onClick handler
+    onClick(member);
+  };
+  
   return (
     <div 
       className={styles.memberSquare}
-      onClick={() => onClick(member)}
+      onClick={handleClick}
     >
       <div 
         className={styles.memberImageContainer}

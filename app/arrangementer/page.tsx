@@ -5,6 +5,7 @@ import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
 import { addCacheBuster } from '@/utils/supabase/realtime';
 import { createGoogleCalendarUrl } from '@/utils/calendar-helpers';
+import { track } from '@vercel/analytics';
 
 // Interface for Event type
 interface Event {
@@ -83,8 +84,22 @@ export default function Arrangementer() {
             {events.map(event => {
               const formattedDate = formatDate(event.date);
               
+              // Function to track event interactions
+              const trackEventInteraction = (interactionType: string) => {
+                track('event_interaction', {
+                  event_id: event.id,
+                  event_title: event.title,
+                  event_date: event.date,
+                  interaction_type: interactionType
+                });
+              };
+              
               return (
-                <div key={event.id} className={styles.eventCard}>
+                <div 
+                  key={event.id} 
+                  className={styles.eventCard}
+                  onClick={() => trackEventInteraction('view_details')}
+                >
                   <div className={styles.eventDateContainer}>
                     <div className={styles.eventDate}>
                       <span className={styles.day}>{formattedDate.day}</span>
@@ -102,6 +117,10 @@ export default function Arrangementer() {
                       className={styles.calendarButton}
                       aria-label="Legg til i kalender"
                       title="Legg til i kalender"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the parent onClick
+                        trackEventInteraction('add_to_calendar');
+                      }}
                     >
                       Legg til
                     </a>

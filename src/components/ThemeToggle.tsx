@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import styles from './ThemeToggle.module.css';
+import { track } from '@vercel/analytics';
 
 const ThemeToggle = () => {
   const [mounted, setMounted] = useState(false);
@@ -17,6 +18,12 @@ const ThemeToggle = () => {
   const handleToggle = () => {
     setIsRotating(true);
     toggleTheme();
+    
+    // Track theme toggle event
+    track('theme_toggle', { 
+      from: theme, 
+      to: theme === 'light' ? 'dark' : 'light' 
+    });
   };
 
   useEffect(() => {
