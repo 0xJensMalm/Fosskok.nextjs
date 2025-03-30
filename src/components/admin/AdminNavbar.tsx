@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import styles from './AdminNavbar.module.css';
 
 interface AdminNavbarProps {
-  activePanel: 'members' | 'events' | 'blog' | 'featureFlags';
-  setActivePanel: (panel: 'members' | 'events' | 'blog' | 'featureFlags') => void;
+  activePanel: 'members' | 'events' | 'blog' | 'featureFlags' | 'gryta';
+  setActivePanel: (panel: 'members' | 'events' | 'blog' | 'featureFlags' | 'gryta') => void;
 }
 
 const AdminNavbar: React.FC<AdminNavbarProps> = ({ activePanel, setActivePanel }) => {
@@ -61,6 +61,13 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ activePanel, setActivePanel }
         >
           <span className={styles.navIcon}>🚩</span>
           Funksjoner
+        </button>
+        <button 
+          className={`${styles.navButton} ${activePanel === 'gryta' ? styles.active : ''}`}
+          onClick={() => setActivePanel('gryta')}
+        >
+          <span className={styles.navIcon}>🧩</span>
+          Gryta
         </button>
       </div>
       <button 

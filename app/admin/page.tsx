@@ -7,9 +7,10 @@ import MembersPanel from '../../src/components/admin/MembersPanel';
 import EventsPanel from '../../src/components/admin/EventsPanel';
 import BlogPanel from '../../src/components/admin/BlogPanel';
 import FeatureFlagsPanel from '../../src/components/admin/FeatureFlagsPanel';
+import GrytaPanel from '../../src/components/admin/GrytaPanel';
 
 export default function AdminPage() {
-  const [activePanel, setActivePanel] = useState<'members' | 'events' | 'blog' | 'featureFlags'>('members');
+  const [activePanel, setActivePanel] = useState<'members' | 'events' | 'blog' | 'featureFlags' | 'gryta'>('members');
 
   return (
     <div className={styles.adminContainer}>
@@ -22,6 +23,7 @@ export default function AdminPage() {
         {activePanel === 'events' && <EventsPanel />}
         {activePanel === 'blog' && <BlogPanel />}
         {activePanel === 'featureFlags' && <FeatureFlagsPanel />}
+        {activePanel === 'gryta' && <GrytaPanel />}
       </div>
     </div>
   );
