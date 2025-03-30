@@ -66,6 +66,8 @@ const FeatureFlagsPanel: React.FC = () => {
         return 'Show the Gryta page in navigation';
       case 'enableMerchPage':
         return 'Show the Merch page in navigation';
+      case 'enableThemeLab':
+        return 'Enable theme customization feature in the header';
       default:
         return 'No description available';
     }
