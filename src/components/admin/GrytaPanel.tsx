@@ -135,28 +135,44 @@ const GrytaPanel: React.FC = () => {
       // TODO: Apply cropping to the image before uploading
       // For now, we'll just upload the original image
       
-      const { error: uploadError } = await supabase.storage
+      console.log('Uploading image to:', filePath);
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('images')
-        .upload(filePath, selectedImage);
+        .upload(filePath, selectedImage, {
+          cacheControl: '3600',
+          upsert: false
+        });
       
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
+      
+      console.log('Upload successful:', uploadData);
       
       // Get the public URL
       const { data: urlData } = supabase.storage
         .from('images')
         .getPublicUrl(filePath);
       
+      console.log('Image URL:', urlData);
+      
       // Create a thumbnail (same URL for now, but would be processed on server)
       const thumbnailPath = `gryta/thumbnails/${fileName}`;
-      await supabase.storage
+      const { error: copyError } = await supabase.storage
         .from('images')
         .copy(filePath, thumbnailPath);
+        
+      if (copyError) {
+        console.error('Copy error:', copyError);
+        throw copyError;
+      }
       
       const { data: thumbnailUrlData } = supabase.storage
         .from('images')
         .getPublicUrl(thumbnailPath);
+      
+      console.log('Thumbnail URL:', thumbnailUrlData);
       
       // Insert the new item
       const { error: insertError } = await supabase
@@ -169,6 +185,7 @@ const GrytaPanel: React.FC = () => {
         });
       
       if (insertError) {
+        console.error('Insert error:', insertError);
         throw insertError;
       }
       

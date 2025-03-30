@@ -21,9 +21,31 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('images', 'images', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Set up storage policies for the images bucket to allow public access to gryta folder
+-- Set up storage policies for the images bucket
+-- Allow public read access to all files in the bucket
 INSERT INTO storage.policies (name, bucket_id, definition)
 VALUES 
-  ('Public Read Access for Gryta', 'images', 
-   '(bucket_id = ''images''::text AND (storage.foldername(name))[1] = ''gryta'')')
+  ('Public Read Access', 'images', 
+   '(bucket_id = ''images''::text)')
+ON CONFLICT (name, bucket_id) DO NOTHING;
+
+-- Allow authenticated users to upload files
+INSERT INTO storage.policies (name, bucket_id, definition)
+VALUES 
+  ('Auth Upload Access', 'images', 
+   '(bucket_id = ''images''::text AND auth.role() = ''authenticated'')')
+ON CONFLICT (name, bucket_id) DO NOTHING;
+
+-- Allow authenticated users to update files
+INSERT INTO storage.policies (name, bucket_id, definition)
+VALUES 
+  ('Auth Update Access', 'images', 
+   '(bucket_id = ''images''::text AND auth.role() = ''authenticated'')')
+ON CONFLICT (name, bucket_id) DO NOTHING;
+
+-- Allow authenticated users to delete files
+INSERT INTO storage.policies (name, bucket_id, definition)
+VALUES 
+  ('Auth Delete Access', 'images', 
+   '(bucket_id = ''images''::text AND auth.role() = ''authenticated'')')
 ON CONFLICT (name, bucket_id) DO NOTHING;
