@@ -46,6 +46,34 @@ const GrytaPanel: React.FC = () => {
         setLoading(true);
         const supabase = createClient();
         
+        // Check if the gryta_items table exists
+        const { data: existingTables, error: tableCheckError } = await supabase
+          .from('information_schema.tables')
+          .select('table_name')
+          .eq('table_name', 'gryta_items')
+          .eq('table_schema', 'public');
+        
+        if (tableCheckError) {
+          console.error('Error checking for gryta_items table:', tableCheckError);
+          setMessage({
+            text: 'Kunne ikke sjekke om databasetabellen eksisterer. Vennligst kontakt administrator.',
+            type: 'error',
+          });
+          setLoading(false);
+          return;
+        }
+        
+        // If the table doesn't exist, show a message
+        if (!existingTables || existingTables.length === 0) {
+          console.log('gryta_items table does not exist yet');
+          setMessage({
+            text: 'Gryta-funksjonaliteten er ikke ferdig satt opp ennå. Vennligst kjør databasemigreringene først.',
+            type: 'error',
+          });
+          setLoading(false);
+          return;
+        }
+        
         // Fetch gryta items
         const { data: grytaData, error: grytaError } = await supabase
           .from('gryta_items')
