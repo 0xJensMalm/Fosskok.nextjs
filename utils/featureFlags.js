@@ -9,6 +9,9 @@ const featureFlags = {
   // Page visibility flags
   enableGrytaPage: false,
   enableMerchPage: false,
+  
+  // Feature flags
+  enableThemeLab: false,
 };
 
 export default featureFlags;

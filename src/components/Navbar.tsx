@@ -6,18 +6,21 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '../../utils/supabase/client';
 import styles from './Navbar.module.css';
 import ThemeToggle from './ThemeToggle';
+import ThemeLab from './ThemeLab';
 import { track } from '@vercel/analytics';
 
 interface FeatureFlags {
   enableGrytaPage: boolean;
   enableMerchPage: boolean;
+  enableThemeLab?: boolean;
 }
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>({
     enableGrytaPage: false,
-    enableMerchPage: false
+    enableMerchPage: false,
+    enableThemeLab: false
   });
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
@@ -32,7 +35,7 @@ const Navbar = () => {
         const { data, error } = await supabase
           .from('feature_flags')
           .select('key, value')
-          .in('key', ['enableGrytaPage', 'enableMerchPage']);
+          .in('key', ['enableGrytaPage', 'enableMerchPage', 'enableThemeLab']);
           
         if (error) {
           console.error('Error fetching feature flags:', error);
@@ -140,6 +143,7 @@ const Navbar = () => {
               </svg>
             </a>
             <ThemeToggle />
+            {featureFlags.enableThemeLab && <ThemeLab />}
           </div>
         </div>
 
@@ -215,6 +219,7 @@ const Navbar = () => {
                 </svg>
               </a>
               <ThemeToggle />
+              {featureFlags.enableThemeLab && <ThemeLab />}
             </div>
           </div>
         </div>
