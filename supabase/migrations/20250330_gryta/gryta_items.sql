@@ -16,11 +16,14 @@ CREATE INDEX IF NOT EXISTS gryta_items_created_at_idx ON gryta_items(created_at)
 -- Create an index on member_id for faster lookups
 CREATE INDEX IF NOT EXISTS gryta_items_member_id_idx ON gryta_items(member_id);
 
--- Set up storage policies for gryta images
--- Make sure 'images' bucket exists and has appropriate permissions
-INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true)
+-- Ensure the images bucket exists
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('images', 'images', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Create folders for gryta images
--- Note: This is a placeholder as Supabase doesn't directly support folder creation in SQL
--- Folders will be created automatically when the first file is uploaded to that path
+-- Set up storage policies for the images bucket to allow public access to gryta folder
+INSERT INTO storage.policies (name, bucket_id, definition)
+VALUES 
+  ('Public Read Access for Gryta', 'images', 
+   '(bucket_id = ''images''::text AND (storage.foldername(name))[1] = ''gryta'')')
+ON CONFLICT (name, bucket_id) DO NOTHING;
