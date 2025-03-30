@@ -46,42 +46,33 @@ const GrytaPanel: React.FC = () => {
         setLoading(true);
         const supabase = createClient();
         
-        // Check if the gryta_items table exists
-        const { data: existingTables, error: tableCheckError } = await supabase
-          .from('information_schema.tables')
-          .select('table_name')
-          .eq('table_name', 'gryta_items')
-          .eq('table_schema', 'public');
-        
-        if (tableCheckError) {
-          console.error('Error checking for gryta_items table:', tableCheckError);
-          setMessage({
-            text: 'Kunne ikke sjekke om databasetabellen eksisterer. Vennligst kontakt administrator.',
-            type: 'error',
-          });
-          setLoading(false);
-          return;
-        }
-        
-        // If the table doesn't exist, show a message
-        if (!existingTables || existingTables.length === 0) {
-          console.log('gryta_items table does not exist yet');
-          setMessage({
-            text: 'Gryta-funksjonaliteten er ikke ferdig satt opp ennå. Vennligst kjør databasemigreringene først.',
-            type: 'error',
-          });
-          setLoading(false);
-          return;
-        }
-        
-        // Fetch gryta items
+        // Fetch gryta items - we'll catch any errors if the table doesn't exist
         const { data: grytaData, error: grytaError } = await supabase
           .from('gryta_items')
           .select('*, members:member_id(name)')
           .order('created_at', { ascending: false });
         
         if (grytaError) {
-          throw grytaError;
+          console.error('Error fetching gryta items:', grytaError);
+          
+          // Check if the error is related to the table not existing
+          if (grytaError.message && (
+              grytaError.message.includes('does not exist') || 
+              grytaError.message.includes('relation') ||
+              grytaError.message.includes('not found')
+            )) {
+            setMessage({
+              text: 'Gryta-funksjonaliteten er ikke ferdig satt opp ennå. Vennligst kjør databasemigreringene først.',
+              type: 'error',
+            });
+          } else {
+            setMessage({
+              text: 'Kunne ikke hente data. Vennligst prøv igjen.',
+              type: 'error',
+            });
+          }
+          setLoading(false);
+          return;
         }
         
         // Fetch members for dropdown
@@ -91,6 +82,7 @@ const GrytaPanel: React.FC = () => {
           .order('name');
         
         if (membersError) {
+          console.error('Error fetching members:', membersError);
           throw membersError;
         }
         
@@ -155,20 +147,50 @@ const GrytaPanel: React.FC = () => {
       
       const supabase = createClient();
       
+      // First, check if the gryta_items table exists by trying to query it
+      const { error: tableCheckError } = await supabase
+        .from('gryta_items')
+        .select('count(*)')
+        .limit(1);
+      
+      if (tableCheckError) {
+        console.error('Table check error:', tableCheckError);
+        setMessage({
+          text: 'Gryta-tabellen eksisterer ikke ennå. Vennligst kjør databasemigreringene først.',
+          type: 'error',
+        });
+        setLoading(false);
+        return;
+      }
+      
       // Upload the image
       const fileExt = selectedImage.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `gryta/${fileName}`;
       
-      // TODO: Apply cropping to the image before uploading
-      // For now, we'll just upload the original image
-      
       console.log('Uploading image to:', filePath);
+      
+      // First, try to create the gryta folder if it doesn't exist
+      try {
+        const placeholderContent = new Uint8Array([]);
+        await supabase.storage
+          .from('images')
+          .upload('gryta/.placeholder', placeholderContent, { upsert: true });
+        
+        await supabase.storage
+          .from('images')
+          .upload('gryta/thumbnails/.placeholder', placeholderContent, { upsert: true });
+      } catch (folderError) {
+        console.log('Folder might already exist or cannot be created:', folderError);
+        // Continue anyway as this is not critical
+      }
+      
+      // Now upload the actual image
       const { error: uploadError, data: uploadData } = await supabase.storage
         .from('images')
         .upload(filePath, selectedImage, {
           cacheControl: '3600',
-          upsert: false
+          upsert: true // Change to true to overwrite any existing file
         });
       
       if (uploadError) {
@@ -185,29 +207,16 @@ const GrytaPanel: React.FC = () => {
       
       console.log('Image URL:', urlData);
       
-      // Create a thumbnail (same URL for now, but would be processed on server)
-      const thumbnailPath = `gryta/thumbnails/${fileName}`;
-      const { error: copyError } = await supabase.storage
-        .from('images')
-        .copy(filePath, thumbnailPath);
-        
-      if (copyError) {
-        console.error('Copy error:', copyError);
-        throw copyError;
-      }
-      
-      const { data: thumbnailUrlData } = supabase.storage
-        .from('images')
-        .getPublicUrl(thumbnailPath);
-      
-      console.log('Thumbnail URL:', thumbnailUrlData);
+      // For now, use the same image for thumbnail
+      // In a production environment, you would resize the image for the thumbnail
+      const thumbnailUrl = urlData.publicUrl;
       
       // Insert the new item
       const { error: insertError } = await supabase
         .from('gryta_items')
         .insert({
           image_url: urlData.publicUrl,
-          thumbnail_url: thumbnailUrlData.publicUrl,
+          thumbnail_url: thumbnailUrl,
           description,
           member_id: selectedMember || null,
         });
@@ -224,6 +233,7 @@ const GrytaPanel: React.FC = () => {
         .order('created_at', { ascending: false });
       
       if (refreshError) {
+        console.error('Refresh error:', refreshError);
         throw refreshError;
       }
       
@@ -294,21 +304,21 @@ const GrytaPanel: React.FC = () => {
         throw deleteError;
       }
       
-      // Extract file paths from URLs
-      const imagePath = itemToDelete.image_url.split('/').pop();
-      const thumbnailPath = itemToDelete.thumbnail_url.split('/').pop();
-      
-      // Delete the files from storage
-      if (imagePath) {
-        await supabase.storage
-          .from('images')
-          .remove([`gryta/${imagePath}`]);
-      }
-      
-      if (thumbnailPath) {
-        await supabase.storage
-          .from('images')
-          .remove([`gryta/thumbnails/${thumbnailPath}`]);
+      // Try to extract file name from URL
+      try {
+        // Extract file paths from URLs
+        const imageUrl = new URL(itemToDelete.image_url);
+        const imagePath = imageUrl.pathname.split('/').pop();
+        
+        if (imagePath) {
+          console.log('Attempting to delete image:', imagePath);
+          await supabase.storage
+            .from('images')
+            .remove([`gryta/${imagePath}`]);
+        }
+      } catch (storageError) {
+        console.error('Error deleting image from storage:', storageError);
+        // Continue anyway as the database record is already deleted
       }
       
       // Update the state
