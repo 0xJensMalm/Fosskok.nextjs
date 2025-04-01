@@ -143,7 +143,7 @@ const Navbar = () => {
               </svg>
             </a>
             <ThemeToggle />
-            {featureFlags.enableThemeLab && <ThemeLab />}
+            {(process.env.NODE_ENV === 'development' || featureFlags.enableThemeLab) && <ThemeLab />}
           </div>
         </div>
 
@@ -219,7 +219,7 @@ const Navbar = () => {
                 </svg>
               </a>
               <ThemeToggle />
-              {featureFlags.enableThemeLab && <ThemeLab />}
+              {(process.env.NODE_ENV === 'development' || featureFlags.enableThemeLab) && <ThemeLab />}
             </div>
           </div>
         </div>

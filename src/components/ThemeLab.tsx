@@ -11,29 +11,104 @@ interface ThemeVariable {
   cssVar: string;
   lightDefault: string;
   darkDefault: string;
-  category: 'background' | 'text' | 'ui';
+  category: 'background' | 'text' | 'ui' | 'social';
 }
 
+// Available fonts for selection
+interface FontOption {
+  name: string;
+  value: string;
+  category: string;
+}
+
+const fontOptions: FontOption[] = [
+  // Sans-serif fonts
+  { name: 'Inter (Standard)', value: "'Inter', 'Helvetica Neue', Arial, sans-serif", category: 'sans-serif' },
+  { name: 'Roboto', value: "'Roboto', 'Helvetica Neue', Arial, sans-serif", category: 'sans-serif' },
+  { name: 'Open Sans', value: "'Open Sans', 'Helvetica Neue', Arial, sans-serif", category: 'sans-serif' },
+  { name: 'Montserrat', value: "'Montserrat', 'Helvetica Neue', Arial, sans-serif", category: 'sans-serif' },
+  { name: 'Raleway', value: "'Raleway', 'Helvetica Neue', Arial, sans-serif", category: 'sans-serif' },
+  { name: 'Poppins', value: "'Poppins', 'Helvetica Neue', Arial, sans-serif", category: 'sans-serif' },
+  { name: 'Work Sans', value: "'Work Sans', 'Helvetica Neue', Arial, sans-serif", category: 'sans-serif' },
+  
+  // Serif fonts
+  { name: 'Playfair Display', value: "'Playfair Display', Georgia, serif", category: 'serif' },
+  { name: 'Merriweather', value: "'Merriweather', Georgia, serif", category: 'serif' },
+  { name: 'Lora', value: "'Lora', Georgia, serif", category: 'serif' },
+  { name: 'Libre Baskerville', value: "'Libre Baskerville', Georgia, serif", category: 'serif' },
+  { name: 'Crimson Pro', value: "'Crimson Pro', Georgia, serif", category: 'serif' },
+  
+  // Monospace fonts
+  { name: 'Source Code Pro', value: "'Source Code Pro', monospace", category: 'monospace' },
+  { name: 'JetBrains Mono', value: "'JetBrains Mono', monospace", category: 'monospace' },
+  { name: 'Fira Code', value: "'Fira Code', monospace", category: 'monospace' },
+  { name: 'Roboto Mono', value: "'Roboto Mono', monospace", category: 'monospace' },
+  
+  // Display fonts
+  { name: 'Bebas Neue', value: "'Bebas Neue', cursive", category: 'display' },
+  { name: 'Abril Fatface', value: "'Abril Fatface', cursive", category: 'display' },
+  { name: 'Pacifico', value: "'Pacifico', cursive", category: 'display' },
+];
+
 const themeVariables: ThemeVariable[] = [
-  { name: 'Background', cssVar: '--background', lightDefault: '#f8f8f8', darkDefault: '#1a1a1a', category: 'background' },
-  { name: 'Foreground', cssVar: '--foreground', lightDefault: '#1a1a1a', darkDefault: '#f8f8f8', category: 'text' },
-  { name: 'Accent', cssVar: '--accent', lightDefault: '#666', darkDefault: '#a0a0a0', category: 'text' },
-  { name: 'Divider', cssVar: '--divider', lightDefault: '#e0e0e0', darkDefault: '#333', category: 'ui' },
-  { name: 'Card Background', cssVar: '--card-bg', lightDefault: '#ffffff', darkDefault: '#222', category: 'background' },
-  { name: 'Card Shadow', cssVar: '--card-shadow', lightDefault: 'rgba(0, 0, 0, 0.1)', darkDefault: 'rgba(0, 0, 0, 0.3)', category: 'ui' },
+  // Background colors
+  { name: 'Bakgrunn', cssVar: '--background', lightDefault: '#f8f8f8', darkDefault: '#1a1a1a', category: 'background' },
+  { name: 'Kortbakgrunn', cssVar: '--card-bg', lightDefault: '#ffffff', darkDefault: '#222', category: 'background' },
+  
+  // Text colors
+  { name: 'Tekst', cssVar: '--foreground', lightDefault: '#1a1a1a', darkDefault: '#f8f8f8', category: 'text' },
+  { name: 'Sekundærtekst', cssVar: '--accent', lightDefault: '#666', darkDefault: '#a0a0a0', category: 'text' },
+  
+  // UI elements
+  { name: 'Skillelinje', cssVar: '--divider', lightDefault: '#e0e0e0', darkDefault: '#333', category: 'ui' },
+  { name: 'Kortskygge', cssVar: '--card-shadow', lightDefault: 'rgba(0, 0, 0, 0.1)', darkDefault: 'rgba(0, 0, 0, 0.3)', category: 'ui' },
+  { name: 'Primærknapp', cssVar: '--primary-button', lightDefault: '#0070f3', darkDefault: '#0070f3', category: 'ui' },
+  { name: 'Sekundærknapp', cssVar: '--secondary-button', lightDefault: '#f5f5f5', darkDefault: '#333', category: 'ui' },
+  
+  // Social media icons (combined)
+  { name: 'Sosiale ikoner', cssVar: '--social-icons-color', lightDefault: '#1877F2', darkDefault: '#1877F2', category: 'social' },
 ];
 
 const ThemeLab: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [customColors, setCustomColors] = useState<Record<string, string>>({});
+  const [selectedFont, setSelectedFont] = useState<string>("");
+  const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
   const { theme } = useTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Initialize custom colors from localStorage or set to current values
+  // Initialize custom colors and font from localStorage or set to current values
   useEffect(() => {
-    const savedColors = localStorage.getItem('fosskok-theme-lab');
+    const savedColors = localStorage.getItem('fosskok-theme-lab-colors');
     if (savedColors) {
       setCustomColors(JSON.parse(savedColors));
+    }
+    
+    const savedFont = localStorage.getItem('fosskok-theme-lab-font');
+    if (savedFont) {
+      setSelectedFont(savedFont);
+      // Apply to root element for global effect
+      document.documentElement.style.setProperty('--font-family', savedFont);
+      // Also apply directly to body for immediate effect
+      document.body.style.fontFamily = savedFont;
+      
+      // Find the index of the saved font
+      const index = fontOptions.findIndex(font => font.value === savedFont);
+      if (index !== -1) {
+        setCurrentFontIndex(index);
+      }
+      
+      // Load the font if it's not already loaded
+      const fontName = savedFont.split(',')[0].replace(/['"]/g, '');
+      if (fontName !== 'Inter') {
+        const link = document.createElement('link');
+        link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(' ', '+')}&display=swap`;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+      }
+    } else {
+      // Default font
+      setSelectedFont(fontOptions[0].value);
     }
   }, []);
 
@@ -45,9 +120,30 @@ const ThemeLab: React.FC = () => {
       });
       
       // Save to localStorage
-      localStorage.setItem('fosskok-theme-lab', JSON.stringify(customColors));
+      localStorage.setItem('fosskok-theme-lab-colors', JSON.stringify(customColors));
     }
   }, [customColors]);
+
+  // Apply font when it changes
+  useEffect(() => {
+    if (selectedFont) {
+      // Apply to root element for global effect
+      document.documentElement.style.setProperty('--font-family', selectedFont);
+      // Also apply directly to body for immediate effect
+      document.body.style.fontFamily = selectedFont;
+      
+      localStorage.setItem('fosskok-theme-lab-font', selectedFont);
+      
+      // Load the font if it's not already loaded
+      const fontName = selectedFont.split(',')[0].replace(/['"]/g, '');
+      if (fontName !== 'Inter') {
+        const link = document.createElement('link');
+        link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(' ', '+')}&display=swap`;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+      }
+    }
+  }, [selectedFont]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -87,6 +183,58 @@ const ThemeLab: React.FC = () => {
     });
   };
 
+  const handleFontChange = (fontValue: string) => {
+    setSelectedFont(fontValue);
+    
+    // Update current font index
+    const index = fontOptions.findIndex(font => font.value === fontValue);
+    if (index !== -1) {
+      setCurrentFontIndex(index);
+    }
+    
+    // Track font change
+    track('theme_lab_font_change', {
+      font: fontValue,
+      current_theme: theme
+    });
+  };
+
+  const goToPreviousFont = () => {
+    const newIndex = (currentFontIndex - 1 + fontOptions.length) % fontOptions.length;
+    setCurrentFontIndex(newIndex);
+    handleFontChange(fontOptions[newIndex].value);
+    
+    // Track font navigation
+    track('theme_lab_font_navigation', {
+      action: 'previous',
+      current_theme: theme
+    });
+  };
+
+  const goToNextFont = () => {
+    const newIndex = (currentFontIndex + 1) % fontOptions.length;
+    setCurrentFontIndex(newIndex);
+    handleFontChange(fontOptions[newIndex].value);
+    
+    // Track font navigation
+    track('theme_lab_font_navigation', {
+      action: 'next',
+      current_theme: theme
+    });
+  };
+
+  const selectRandomFont = () => {
+    const randomIndex = Math.floor(Math.random() * fontOptions.length);
+    setCurrentFontIndex(randomIndex);
+    handleFontChange(fontOptions[randomIndex].value);
+    
+    // Track font navigation
+    track('theme_lab_font_navigation', {
+      action: 'random',
+      current_theme: theme
+    });
+  };
+
   const resetColors = () => {
     // Clear custom colors
     setCustomColors({});
@@ -97,10 +245,30 @@ const ThemeLab: React.FC = () => {
     });
     
     // Clear localStorage
-    localStorage.removeItem('fosskok-theme-lab');
+    localStorage.removeItem('fosskok-theme-lab-colors');
     
     // Track reset
     track('theme_lab_reset', { current_theme: theme });
+  };
+
+  const resetFont = () => {
+    // Reset to default font
+    setSelectedFont(fontOptions[0].value);
+    setCurrentFontIndex(0);
+    document.documentElement.style.setProperty('--font-family', fontOptions[0].value);
+    document.body.style.fontFamily = fontOptions[0].value;
+    localStorage.removeItem('fosskok-theme-lab-font');
+    
+    // Track reset
+    track('theme_lab_font_reset', { current_theme: theme });
+  };
+
+  const resetAll = () => {
+    resetColors();
+    resetFont();
+    
+    // Track reset all
+    track('theme_lab_reset_all', { current_theme: theme });
   };
 
   const getCurrentColor = (variable: ThemeVariable) => {
@@ -114,12 +282,48 @@ const ThemeLab: React.FC = () => {
            (theme === 'light' ? variable.lightDefault : variable.darkDefault);
   };
 
+  const exportTheme = () => {
+    // Create theme object
+    const themeObject = {
+      colors: customColors,
+      font: selectedFont,
+      timestamp: new Date().toISOString(),
+      theme: theme
+    };
+    
+    // Convert to JSON string
+    const themeJson = JSON.stringify(themeObject, null, 2);
+    
+    // Create CSS string
+    let themeCss = `/* Fosskok Custom Theme */\n`;
+    themeCss += `:root {\n`;
+    Object.entries(customColors).forEach(([cssVar, value]) => {
+      themeCss += `  ${cssVar}: ${value};\n`;
+    });
+    themeCss += `  --font-family: ${selectedFont};\n`;
+    themeCss += `}\n`;
+    
+    // Create download link
+    const blob = new Blob([`${themeCss}\n\n/* JSON Format */\n${themeJson}`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fosskok-theme-${theme}-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    // Track export
+    track('theme_lab_export', { current_theme: theme });
+  };
+
   return (
     <div className={styles.themeLab} ref={dropdownRef}>
       <button 
         className={styles.themeLabToggle} 
         onClick={toggleDropdown}
-        aria-label="Open Theme Lab"
+        aria-label="Farger og font"
         aria-expanded={isOpen}
       >
         <svg 
@@ -134,57 +338,148 @@ const ThemeLab: React.FC = () => {
           strokeLinejoin="round"
         >
           <circle cx="12" cy="12" r="10"></circle>
-          <path d="M12 2v20"></path>
-          <path d="M2 12h20"></path>
-          <path d="M12 2c-2.8 3.7-5 8-5 10s2.2 6.3 5 10"></path>
-          <path d="M12 2c2.8 3.7 5 8 5 10s-2.2 6.3-5 10"></path>
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="12" y1="2" x2="12" y2="4"></line>
+          <line x1="12" y1="20" x2="12" y2="22"></line>
+          <line x1="2" y1="12" x2="4" y2="12"></line>
+          <line x1="20" y1="12" x2="22" y2="12"></line>
         </svg>
       </button>
       
       {isOpen && (
         <div className={styles.dropdown}>
           <div className={styles.dropdownHeader}>
-            <h3>Theme Lab</h3>
-            <button 
-              className={styles.resetButton}
-              onClick={resetColors}
-            >
-              Reset to Default
-            </button>
+            <h3>Farger og font</h3>
           </div>
           
-          <div className={styles.colorGroups}>
-            {['background', 'text', 'ui'].map(category => (
-              <div key={category} className={styles.colorGroup}>
-                <h4>{category.charAt(0).toUpperCase() + category.slice(1)}</h4>
-                {themeVariables
-                  .filter(variable => variable.category === category)
-                  .map(variable => (
-                    <div key={variable.cssVar} className={styles.colorControl}>
-                      <label htmlFor={variable.cssVar}>{variable.name}</label>
-                      <div className={styles.colorInputGroup}>
-                        <input
-                          type="color"
-                          id={variable.cssVar}
-                          value={getCurrentColor(variable)}
-                          onChange={(e) => handleColorChange(variable.cssVar, e.target.value)}
-                        />
-                        <input
-                          type="text"
-                          value={getCurrentColor(variable)}
-                          onChange={(e) => handleColorChange(variable.cssVar, e.target.value)}
-                          className={styles.hexInput}
-                        />
-                      </div>
-                    </div>
-                  ))}
+          <div className={styles.compactLayout}>
+            {/* Fonts Section */}
+            <div className={styles.section}>
+              <h4>Font</h4>
+              <div className={styles.fontSelector}>
+                <div className={styles.fontNavigation}>
+                  <button 
+                    className={styles.fontNavButton}
+                    onClick={goToPreviousFont}
+                    aria-label="Forrige font"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                  </button>
+                  <select 
+                    value={selectedFont}
+                    onChange={(e) => handleFontChange(e.target.value)}
+                    className={styles.selectInput}
+                  >
+                    <optgroup label="Sans-serif">
+                      {fontOptions
+                        .filter(font => font.category === 'sans-serif')
+                        .map(font => (
+                          <option key={font.value} value={font.value} style={{fontFamily: font.value}}>
+                            {font.name}
+                          </option>
+                        ))
+                      }
+                    </optgroup>
+                    <optgroup label="Serif">
+                      {fontOptions
+                        .filter(font => font.category === 'serif')
+                        .map(font => (
+                          <option key={font.value} value={font.value} style={{fontFamily: font.value}}>
+                            {font.name}
+                          </option>
+                        ))
+                      }
+                    </optgroup>
+                    <optgroup label="Monospace">
+                      {fontOptions
+                        .filter(font => font.category === 'monospace')
+                        .map(font => (
+                          <option key={font.value} value={font.value} style={{fontFamily: font.value}}>
+                            {font.name}
+                          </option>
+                        ))
+                      }
+                    </optgroup>
+                    <optgroup label="Display">
+                      {fontOptions
+                        .filter(font => font.category === 'display')
+                        .map(font => (
+                          <option key={font.value} value={font.value} style={{fontFamily: font.value}}>
+                            {font.name}
+                          </option>
+                        ))
+                      }
+                    </optgroup>
+                  </select>
+                  <button 
+                    className={styles.fontNavButton}
+                    onClick={goToNextFont}
+                    aria-label="Neste font"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                  </button>
+                  <button 
+                    className={styles.fontNavButton}
+                    onClick={selectRandomFont}
+                    aria-label="Tilfeldig font"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
-            ))}
+            </div>
+            
+            {/* Colors Section */}
+            <div className={styles.section}>
+              <h4>Farger</h4>
+              <div className={styles.colorGrid}>
+                {themeVariables.map(variable => (
+                  <div key={variable.cssVar} className={styles.colorControl}>
+                    <label htmlFor={variable.cssVar}>{variable.name}</label>
+                    <div className={styles.colorInputGroup}>
+                      <input
+                        type="color"
+                        id={variable.cssVar}
+                        value={getCurrentColor(variable)}
+                        onChange={(e) => handleColorChange(variable.cssVar, e.target.value)}
+                        className={styles.colorPicker}
+                      />
+                      <input
+                        type="text"
+                        value={getCurrentColor(variable)}
+                        onChange={(e) => handleColorChange(variable.cssVar, e.target.value)}
+                        className={styles.hexInput}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           
           <div className={styles.dropdownFooter}>
+            <div className={styles.actionButtons}>
+              <button 
+                className={styles.resetButton}
+                onClick={resetAll}
+              >
+                Tilbakestill alt
+              </button>
+              <button 
+                className={styles.exportButton}
+                onClick={exportTheme}
+              >
+                Eksporter tema
+              </button>
+            </div>
             <p className={styles.note}>
-              Changes are automatically saved to your browser.
+              Endringer lagres automatisk i nettleseren.
             </p>
           </div>
         </div>
