@@ -75,6 +75,8 @@ const ThemeLab: React.FC = () => {
   const [selectedFont, setSelectedFont] = useState<string>("");
   const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
   const [storedColors, setStoredColors] = useState<string[]>([]);
+  const [showSavedThemes, setShowSavedThemes] = useState(false);
+  const [savedThemes, setSavedThemes] = useState<Array<{name: string, colors: Record<string, string>, font: string}>>([]);
   const { theme } = useTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -116,6 +118,12 @@ const ThemeLab: React.FC = () => {
     const savedStoredColors = localStorage.getItem('fosskok-theme-lab-stored-colors');
     if (savedStoredColors) {
       setStoredColors(JSON.parse(savedStoredColors));
+    }
+    
+    // Load saved themes from localStorage
+    const savedThemesData = localStorage.getItem('fosskok-theme-lab-saved-themes');
+    if (savedThemesData) {
+      setSavedThemes(JSON.parse(savedThemesData));
     }
   }, []);
 
@@ -232,6 +240,113 @@ const ThemeLab: React.FC = () => {
         current_theme: theme
       });
     }
+  };
+
+  const randomizeAllColors = () => {
+    const newColors: Record<string, string> = {};
+    
+    // Generate random colors for all variables
+    themeVariables.forEach(variable => {
+      const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      newColors[variable.cssVar] = randomColor;
+      document.documentElement.style.setProperty(variable.cssVar, randomColor);
+    });
+    
+    // Update state and save to localStorage
+    setCustomColors(newColors);
+    localStorage.setItem('fosskok-theme-lab-colors', JSON.stringify(newColors));
+    
+    // Track randomize all action
+    track('theme_lab_randomize_all', { 
+      current_theme: theme
+    });
+  };
+
+  const toggleSavedThemes = () => {
+    setShowSavedThemes(!showSavedThemes);
+    
+    // Track saved themes toggle
+    track('theme_lab_saved_themes_toggle', {
+      action: !showSavedThemes ? 'show' : 'hide',
+      current_theme: theme
+    });
+  };
+
+  const saveCurrentTheme = () => {
+    // Create a name based on date and time
+    const date = new Date();
+    const themeName = `Theme ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    
+    // Create theme object
+    const newTheme = {
+      name: themeName,
+      colors: {...customColors},
+      font: selectedFont
+    };
+    
+    // Add to saved themes
+    const updatedThemes = [...savedThemes, newTheme];
+    setSavedThemes(updatedThemes);
+    
+    // Save to localStorage
+    localStorage.setItem('fosskok-theme-lab-saved-themes', JSON.stringify(updatedThemes));
+    
+    // Show saved themes section if not already visible
+    if (!showSavedThemes) {
+      setShowSavedThemes(true);
+    }
+    
+    // Track theme save
+    track('theme_lab_save_theme', {
+      theme_count: updatedThemes.length,
+      current_theme: theme
+    });
+  };
+
+  const activateTheme = (savedTheme: {name: string, colors: Record<string, string>, font: string}) => {
+    // Apply colors
+    Object.entries(savedTheme.colors).forEach(([cssVar, value]) => {
+      document.documentElement.style.setProperty(cssVar, value);
+    });
+    
+    // Apply font
+    document.documentElement.style.setProperty('--font-family', savedTheme.font);
+    document.body.style.fontFamily = savedTheme.font;
+    
+    // Update state
+    setCustomColors(savedTheme.colors);
+    setSelectedFont(savedTheme.font);
+    
+    // Find font index
+    const fontIndex = fontOptions.findIndex(font => font.value === savedTheme.font);
+    if (fontIndex !== -1) {
+      setCurrentFontIndex(fontIndex);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('fosskok-theme-lab-colors', JSON.stringify(savedTheme.colors));
+    localStorage.setItem('fosskok-theme-lab-font', savedTheme.font);
+    
+    // Track theme activation
+    track('theme_lab_activate_theme', {
+      theme_name: savedTheme.name,
+      current_theme: theme
+    });
+  };
+
+  const deleteTheme = (index: number) => {
+    const updatedThemes = [...savedThemes];
+    updatedThemes.splice(index, 1);
+    setSavedThemes(updatedThemes);
+    
+    // Update localStorage
+    localStorage.setItem('fosskok-theme-lab-saved-themes', JSON.stringify(updatedThemes));
+    
+    // Track theme deletion
+    track('theme_lab_delete_theme', {
+      theme_count: updatedThemes.length,
+      current_theme: theme
+    });
   };
 
   const goToPreviousFont = () => {
@@ -518,6 +633,73 @@ const ThemeLab: React.FC = () => {
                 ))}
               </div>
             </div>
+            
+            {/* Central Buttons */}
+            <div className={styles.centralButtons}>
+              <button 
+                className={`${styles.centralButton} ${styles.crazyButton}`}
+                onClick={randomizeAllColors}
+                aria-label="Go Crazy"
+              >
+                Go Crazy
+              </button>
+              <button 
+                className={`${styles.centralButton} ${styles.saveThemeButton}`}
+                onClick={toggleSavedThemes}
+                aria-label="Temaer"
+              >
+                Temaer
+              </button>
+            </div>
+            
+            {/* Saved Themes Section */}
+            {showSavedThemes && (
+              <div className={styles.savedThemesSection}>
+                <h4>Lagrede temaer</h4>
+                {savedThemes.length === 0 ? (
+                  <p className={styles.note}>Ingen lagrede temaer ennå. Klikk på "Lagre tema" for å lagre det nåværende temaet.</p>
+                ) : (
+                  savedThemes.map((savedTheme, index) => (
+                    <div key={index} className={styles.themeItem}>
+                      <div className={styles.themeColors}>
+                        {Object.values(savedTheme.colors).map((color, colorIndex) => (
+                          <div 
+                            key={colorIndex} 
+                            className={styles.themeColorSwatch} 
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                      <div className={styles.themeActions}>
+                        <button 
+                          className={`${styles.themeActionButton} ${styles.activateButton}`}
+                          onClick={() => activateTheme(savedTheme)}
+                          aria-label="Aktiver tema"
+                        >
+                          Aktiver
+                        </button>
+                        <button 
+                          className={styles.themeActionButton}
+                          onClick={() => deleteTheme(index)}
+                          aria-label="Slett tema"
+                        >
+                          Slett
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+                <button 
+                  className={styles.centralButton}
+                  onClick={saveCurrentTheme}
+                  style={{ width: '100%', marginTop: '10px' }}
+                  aria-label="Lagre nåværende tema"
+                >
+                  Lagre nåværende tema
+                </button>
+              </div>
+            )}
           </div>
           
           <div className={styles.dropdownFooter}>
