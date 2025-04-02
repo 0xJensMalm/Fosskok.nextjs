@@ -297,12 +297,41 @@
   margin-top: 5px;
 }
 
-.savedThemesSection h4 {
-  margin: 0 0 10px 0;
+.savedThemesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.savedThemesHeader h4 {
+  margin: 0;
   font-size: 0.85rem;
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.saveCurrentButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.saveCurrentButton:hover {
+  background-color: #f0f0f0;
+}
+
+.saveCurrentButton svg {
+  margin-top: 1px;
 }
 
 .themeItem {

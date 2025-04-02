@@ -617,16 +617,6 @@ const ThemeLab: React.FC = () => {
                             <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
                           </svg>
                         </button>
-                        <button
-                          className={styles.colorActionButton}
-                          onClick={() => storeColor(getCurrentColor(variable))}
-                          aria-label="Lagre farge"
-                          title="Lagre farge"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 19V5M5 12l7 7 7-7"/>
-                          </svg>
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -655,9 +645,21 @@ const ThemeLab: React.FC = () => {
             {/* Saved Themes Section */}
             {showSavedThemes && (
               <div className={styles.savedThemesSection}>
-                <h4>Lagrede temaer</h4>
+                <div className={styles.savedThemesHeader}>
+                  <h4>Lagrede temaer</h4>
+                  <button 
+                    className={styles.saveCurrentButton}
+                    onClick={saveCurrentTheme}
+                    aria-label="Lagre nåværende tema"
+                  >
+                    <span>Lagre nåværende tema</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                  </button>
+                </div>
                 {savedThemes.length === 0 ? (
-                  <p className={styles.note}>Ingen lagrede temaer ennå. Klikk på "Lagre tema" for å lagre det nåværende temaet.</p>
+                  <p className={styles.note}>Ingen lagrede temaer ennå. Klikk på "Lagre nåværende tema" for å lagre det nåværende temaet.</p>
                 ) : (
                   savedThemes.map((savedTheme, index) => (
                     <div key={index} className={styles.themeItem}>
@@ -690,14 +692,6 @@ const ThemeLab: React.FC = () => {
                     </div>
                   ))
                 )}
-                <button 
-                  className={styles.centralButton}
-                  onClick={saveCurrentTheme}
-                  style={{ width: '100%', marginTop: '10px' }}
-                  aria-label="Lagre nåværende tema"
-                >
-                  Lagre nåværende tema
-                </button>
               </div>
             )}
           </div>
