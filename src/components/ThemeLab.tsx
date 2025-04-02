@@ -54,6 +54,7 @@ const themeVariables: ThemeVariable[] = [
   // Background colors
   { name: 'Bakgrunn', cssVar: '--background', lightDefault: '#f8f8f8', darkDefault: '#1a1a1a', category: 'background' },
   { name: 'Kortbakgrunn', cssVar: '--card-bg', lightDefault: '#ffffff', darkDefault: '#222', category: 'background' },
+  { name: 'Header og footer', cssVar: '--header-footer-bg', lightDefault: '#f0f0f0', darkDefault: '#1c1c1c', category: 'background' },
   
   // Text colors
   { name: 'Tekst', cssVar: '--foreground', lightDefault: '#1a1a1a', darkDefault: '#f8f8f8', category: 'text' },
@@ -62,10 +63,9 @@ const themeVariables: ThemeVariable[] = [
   // UI elements
   { name: 'Skillelinje', cssVar: '--divider', lightDefault: '#e0e0e0', darkDefault: '#333', category: 'ui' },
   { name: 'Kortskygge', cssVar: '--card-shadow', lightDefault: 'rgba(0, 0, 0, 0.1)', darkDefault: 'rgba(0, 0, 0, 0.3)', category: 'ui' },
-  { name: 'Primærknapp', cssVar: '--primary-button', lightDefault: '#0070f3', darkDefault: '#0070f3', category: 'ui' },
-  { name: 'Sekundærknapp', cssVar: '--secondary-button', lightDefault: '#f5f5f5', darkDefault: '#333', category: 'ui' },
+  { name: 'Knapper', cssVar: '--button-bg', lightDefault: '#0070f3', darkDefault: '#0070f3', category: 'ui' },
   
-  // Social media icons (combined)
+  // Social media icons (separate)
   { name: 'Sosiale ikoner', cssVar: '--social-icons-color', lightDefault: '#1877F2', darkDefault: '#1877F2', category: 'social' },
 ];
 
@@ -74,6 +74,7 @@ const ThemeLab: React.FC = () => {
   const [customColors, setCustomColors] = useState<Record<string, string>>({});
   const [selectedFont, setSelectedFont] = useState<string>("");
   const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
+  const [storedColors, setStoredColors] = useState<string[]>([]);
   const { theme } = useTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -109,6 +110,12 @@ const ThemeLab: React.FC = () => {
     } else {
       // Default font
       setSelectedFont(fontOptions[0].value);
+    }
+    
+    // Load stored colors from localStorage
+    const savedStoredColors = localStorage.getItem('fosskok-theme-lab-stored-colors');
+    if (savedStoredColors) {
+      setStoredColors(JSON.parse(savedStoredColors));
     }
   }, []);
 
@@ -197,6 +204,34 @@ const ThemeLab: React.FC = () => {
       font: fontValue,
       current_theme: theme
     });
+  };
+
+  const generateRandomColor = (cssVar: string) => {
+    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+    handleColorChange(cssVar, randomColor);
+    
+    // Track random color generation
+    track('theme_lab_random_color', {
+      variable: cssVar,
+      value: randomColor,
+      current_theme: theme
+    });
+  };
+  
+  const storeColor = (color: string) => {
+    // Add color to stored colors if not already in the list
+    if (!storedColors.includes(color)) {
+      const updatedColors = [...storedColors, color];
+      setStoredColors(updatedColors);
+      localStorage.setItem('fosskok-theme-lab-stored-colors', JSON.stringify(updatedColors));
+      
+      // Track color storage
+      track('theme_lab_store_color', {
+        color: color,
+        stored_count: updatedColors.length,
+        current_theme: theme
+      });
+    }
   };
 
   const goToPreviousFont = () => {
@@ -456,6 +491,28 @@ const ThemeLab: React.FC = () => {
                         onChange={(e) => handleColorChange(variable.cssVar, e.target.value)}
                         className={styles.hexInput}
                       />
+                      <div className={styles.colorButtonsGroup}>
+                        <button
+                          className={styles.colorActionButton}
+                          onClick={() => generateRandomColor(variable.cssVar)}
+                          aria-label="Tilfeldig farge"
+                          title="Tilfeldig farge"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                          </svg>
+                        </button>
+                        <button
+                          className={styles.colorActionButton}
+                          onClick={() => storeColor(getCurrentColor(variable))}
+                          aria-label="Lagre farge"
+                          title="Lagre farge"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 19V5M5 12l7 7 7-7"/>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

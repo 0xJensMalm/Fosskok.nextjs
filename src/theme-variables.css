@@ -1,0 +1,39 @@
+/* Theme Variables CSS */
+:root {
+  /* Default light theme variables */
+  --background: #f8f8f8;
+  --card-bg: #ffffff;
+  --header-footer-bg: #f0f0f0;
+  --foreground: #1a1a1a;
+  --accent: #666;
+  --divider: #e0e0e0;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --button-bg: #0070f3;
+  --social-icons-color: #1877F2;
+}
+
+/* Apply theme variables to components */
+.navbar {
+  background-color: var(--header-footer-bg);
+}
+
+.footer {
+  background-color: var(--header-footer-bg);
+}
+
+/* Button styles */
+button.primary {
+  background-color: var(--button-bg);
+  color: white;
+}
+
+button.secondary {
+  background-color: transparent;
+  border-color: var(--button-bg);
+  color: var(--button-bg);
+}
+
+/* Social icons */
+.socialIcons a {
+  color: var(--social-icons-color);
+}

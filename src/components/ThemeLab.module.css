@@ -32,7 +32,7 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 460px;
+  width: 520px;
   background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 4px 12px var(--card-shadow);
@@ -137,12 +137,13 @@
 .colorGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .colorControl {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .colorControl label {
@@ -156,7 +157,7 @@
 .colorInputGroup {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
 }
 
 .colorPicker {
@@ -172,8 +173,8 @@
 .hexInput {
   flex: 1;
   height: 24px;
-  min-width: 60px;
-  max-width: 100px;
+  min-width: 40px;
+  max-width: 70px;
   border: 1px solid var(--divider);
   border-radius: 4px;
   padding: 0 4px;
@@ -181,6 +182,36 @@
   font-size: 0.7rem;
   color: var(--foreground);
   background-color: var(--card-bg);
+}
+
+.colorActionButton {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--divider);
+  border-radius: 3px;
+  background: none;
+  color: var(--foreground);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all 0.2s ease;
+}
+
+.colorActionButton:hover {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.colorActionButton svg {
+  width: 12px;
+  height: 12px;
+}
+
+.colorButtonsGroup {
+  display: flex;
+  gap: 2px;
 }
 
 .actionButtons {
@@ -231,7 +262,7 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .dropdown {
-    width: 400px;
+    width: 460px;
     right: -20px;
   }
   
@@ -241,14 +272,14 @@
   }
   
   .hexInput {
-    min-width: 50px;
-    max-width: 80px;
+    min-width: 40px;
+    max-width: 60px;
   }
 }
 
 @media (max-width: 480px) {
   .dropdown {
-    width: 320px;
+    width: 360px;
     right: -50px;
   }
   
@@ -258,5 +289,10 @@
   
   .compactLayout {
     max-height: 350px;
+  }
+  
+  .hexInput {
+    min-width: 35px;
+    max-width: 50px;
   }
 }
