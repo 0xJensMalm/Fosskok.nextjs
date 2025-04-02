@@ -14,7 +14,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  color: var(--foreground);
+  color: #333;
   transition: background-color 0.2s ease, transform 0.3s ease;
 }
 
@@ -32,7 +32,7 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 420px;
+  width: 460px;
   background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 4px 12px var(--card-shadow);
@@ -65,9 +65,9 @@
 }
 
 .compactLayout {
-  max-height: 380px;
+  max-height: 400px;
   overflow-y: auto;
-  padding: 10px 16px;
+  padding: 12px 16px;
 }
 
 .section {
@@ -137,7 +137,7 @@
 .colorGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .colorControl {
@@ -146,7 +146,7 @@
 }
 
 .colorControl label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   margin-bottom: 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -156,12 +156,12 @@
 .colorInputGroup {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .colorPicker {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border: 1px solid var(--divider);
   border-radius: 4px;
   cursor: pointer;
@@ -171,12 +171,14 @@
 
 .hexInput {
   flex: 1;
-  height: 28px;
+  height: 24px;
+  min-width: 60px;
+  max-width: 100px;
   border: 1px solid var(--divider);
   border-radius: 4px;
-  padding: 0 6px;
+  padding: 0 4px;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--foreground);
   background-color: var(--card-bg);
 }
@@ -190,7 +192,7 @@
 .resetButton, .exportButton {
   flex: 1;
   background: none;
-  border: 1px solid var(--divider);
+  border: 1px solid #ccc;
   border-radius: 4px;
   padding: 8px 0;
   font-size: 0.8rem;
@@ -199,12 +201,18 @@
   transition: all 0.2s ease;
 }
 
-.resetButton:hover, .exportButton:hover {
-  background-color: rgba(128, 128, 128, 0.1);
+.resetButton {
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
 }
 
-.exportButton {
-  background-color: rgba(128, 128, 128, 0.05);
+.resetButton:hover {
+  background-color: #f0f0f0;
+}
+
+.exportButton:hover {
+  background-color: rgba(128, 128, 128, 0.1);
 }
 
 .dropdownFooter {
@@ -223,26 +231,32 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .dropdown {
-    width: 360px;
+    width: 400px;
     right: -20px;
   }
   
   .colorGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .hexInput {
+    min-width: 50px;
+    max-width: 80px;
   }
 }
 
 @media (max-width: 480px) {
   .dropdown {
-    width: 300px;
+    width: 320px;
     right: -50px;
   }
   
   .colorGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .compactLayout {
-    max-height: 320px;
+    max-height: 350px;
   }
 }
