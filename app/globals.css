@@ -1,36 +1,37 @@
 :root {
   /* Light mode (default) */
-  --background: #f8f8f8;
-  --foreground: #1a1a1a;
-  --accent: #666;
-  --divider: #e0e0e0;
-  --card-bg: #ffffff;
-  --card-shadow: rgba(0, 0, 0, 0.1);
-  --font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --background: #ffde00;
+  --foreground: #6b1f50;
+  --accent: #000000;
+  --divider: #386e52;
+  --card-bg: #00ffa1;
+  --card-shadow: #ff5800;
+  --font-family: 'Josefin Sans', 'Helvetica Neue', Arial, sans-serif;
+  --header-footer-bg: #ff89c4;
+  --social-icons-color: #c224e1;
+  --button-bg: #6276bd;
   
   /* Header and footer */
-  --header-footer-bg: #f0f0f0;
+  --header-footer-bg: #ff89c4;
   
   /* Social media icons */
-  --social-icons-color: #1877F2;
+  --social-icons-color: #c224e1;
   
   /* UI elements */
-  --button-bg: #0070f3;
+  --button-bg: #6276bd;
 }
 
 [data-theme="dark"] { 
-  --background: #1a1a1a;
-  --foreground: #f8f8f8;
-  --accent: #a0a0a0;
-  --divider: #333;
-  --card-bg: #222;
-  --card-shadow: rgba(0, 0, 0, 0.3);
-  
-  /* Header and footer */
-  --header-footer-bg: #1c1c1c;
-  
-  /* UI elements */
-  --button-bg: #0070f3;
+  --background: #221a00;
+  --foreground: #ffe7f4;
+  --accent: #ffb700;
+  --divider: #386e52;
+  --card-bg: #003d2c;
+  --card-shadow: #ff5800;
+  --header-footer-bg: #4d1e36;
+  --social-icons-color: #c224e1;
+  --button-bg: #334477;
+  --font-family: 'Josefin Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
 * {
@@ -135,4 +136,9 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+h1, h2, h3, h4, h5, h6, nav, .navbar, header {
+  font-family: 'Rammetto One', cursive !important;
+  letter-spacing: 0.01em;
 }

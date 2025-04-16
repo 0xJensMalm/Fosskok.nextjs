@@ -1,15 +1,26 @@
 /* Theme Variables CSS */
 :root {
-  /* Default light theme variables */
-  --background: #f8f8f8;
-  --card-bg: #ffffff;
-  --header-footer-bg: #f0f0f0;
-  --foreground: #1a1a1a;
-  --accent: #666;
-  --divider: #e0e0e0;
-  --card-shadow: rgba(0, 0, 0, 0.1);
-  --button-bg: #0070f3;
-  --social-icons-color: #1877F2;
+  --background: #ffde00;
+  --card-bg: #00ffa1;
+  --header-footer-bg: #ff89c4;
+  --foreground: #6b1f50;
+  --accent: #000000;
+  --divider: #386e52;
+  --card-shadow: #ff5800;
+  --button-bg: #6276bd;
+  --social-icons-color: #c224e1;
+}
+
+[data-theme="dark"] {
+  --background: #221a00;
+  --card-bg: #003d2c;
+  --header-footer-bg: #4d1e36;
+  --foreground: #ffe7f4;
+  --accent: #ffb700;
+  --divider: #386e52;
+  --card-shadow: #ff5800;
+  --button-bg: #334477;
+  --social-icons-color: #c224e1;
 }
 
 /* Apply theme variables to components */

@@ -11,25 +11,24 @@ interface ThemeContextType {
 
 // Create context with default values
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'light',
+  theme: 'dark',
   toggleTheme: () => {}
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Initialize with light theme for SSR
-  const [theme, setTheme] = useState<Theme>('light');
+  // Initialize with dark theme for SSR
+  const [theme, setTheme] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
   // Effect to handle initial theme setup - only runs on client
   useEffect(() => {
-    // Get stored theme or default to light
+    // Get stored theme or default to dark
     const storedTheme = localStorage.getItem('fosskok-theme') as Theme | null;
     
     if (storedTheme) {
       setTheme(storedTheme);
     } else {
-      // Always default to light mode
-      setTheme('light');
+      setTheme('dark');
     }
     
     setMounted(true);
