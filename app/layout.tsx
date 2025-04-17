@@ -5,6 +5,7 @@ import Navbar from "../src/components/Navbar";
 import Footer from "../src/components/Footer";
 import { ThemeProvider } from "../src/context/ThemeContext";
 import { Analytics } from "@vercel/analytics/react";
+import PromoPopup from "../src/components/PromoPopup";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="no" suppressHydrationWarning>
       <body className={`${josefin.className} ${rammetto.variable}`} suppressHydrationWarning>
         <ThemeProvider>
+          <PromoPopup />
           <div className="page-container">
             <Navbar />
             {children}
