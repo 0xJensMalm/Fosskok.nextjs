@@ -204,3 +204,20 @@
     margin: 0;
   }
 }
+
+@media (max-width: 480px) {
+  .navContainer {
+    padding: 0 0.5rem;
+  }
+  .logo {
+    font-size: 1.1rem;
+  }
+  .navCenter {
+    gap: 1rem;
+    padding: 0 0.2rem;
+  }
+  .navLink {
+    font-size: 0.95rem;
+    padding: 0.3rem 0;
+  }
+}
