@@ -204,11 +204,13 @@ export default function SisteNyttPage() {
 
   // --- Image Preview, Move, and Crop ---
   function ImageCropper({ src, onCrop }: { src: string, onCrop: (croppedUrl: string) => void }) {
-    const [crop, setCrop] = useState<Crop>({ unit: '%', width: 80, aspect: 16/9 });
+    // Track aspect ratio separately
+    const [aspect, setAspect] = useState<number>(16/9);
+    // Crop object must NOT include aspect property
+    const [crop, setCrop] = useState<Crop>({ unit: '%', width: 80, x: 10, y: 10, height: 60 });
     const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
     const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
 
-    // When cropping is done, create a cropped image and pass URL to parent
     useEffect(() => {
       if (!completedCrop || !imageRef) return;
       const canvas = document.createElement('canvas');
@@ -238,14 +240,20 @@ export default function SisteNyttPage() {
       }
     }, [completedCrop, imageRef, onCrop]);
 
+    // Change aspect and reset crop
+    const setAspectAndCrop = (newAspect: number) => {
+      setAspect(newAspect);
+      setCrop({ unit: '%', width: 80, x: 10, y: 10, height: 60 });
+    };
+
     return (
       <div className={styles.imageCropperContainer}>
         <div className={styles.cropperBox}>
           <ReactCrop
             crop={crop}
-            onChange={c => setCrop(c)}
-            onComplete={c => setCompletedCrop(c)}
-            aspect={16/9}
+            onChange={(c: Crop) => setCrop(c)}
+            onComplete={(c: PixelCrop) => setCompletedCrop(c)}
+            aspect={aspect}
           >
             <img
               ref={setImageRef}
@@ -256,9 +264,9 @@ export default function SisteNyttPage() {
           </ReactCrop>
         </div>
         <div className={styles.cropperControls}>
-          <button type="button" onClick={() => setCrop({ unit: '%', width: 100, aspect: 16/9 })}>Full bredde</button>
-          <button type="button" onClick={() => setCrop({ unit: '%', width: 60, aspect: 1 })}>Kvadrat</button>
-          <button type="button" onClick={() => setCrop({ unit: '%', width: 80, aspect: 4/3 })}>4:3</button>
+          <button type="button" onClick={() => setAspectAndCrop(16/9)}>Full bredde</button>
+          <button type="button" onClick={() => setAspectAndCrop(1)}>Kvadrat</button>
+          <button type="button" onClick={() => setAspectAndCrop(4/3)}>4:3</button>
         </div>
       </div>
     );
