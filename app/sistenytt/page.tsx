@@ -1,37 +1,79 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./sistenytt.module.css";
 import ImageUploader from "../../src/components/admin/ImageUploader";
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
-const USERNAME = "admin";
-const PASSWORD = "fosskok2025";
+function LoginBox({ onLogin, error }: { onLogin: (username: string, password: string) => void; error: string }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  return (
+    <div className={styles.loginBox}>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          onLogin(username, password);
+        }}
+        className={styles.loginFormCompact}
+      >
+        <input
+          type="text"
+          placeholder="Brukernavn"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          className={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="Passord"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          className={styles.input}
+        />
+        <button type="submit" className={styles.loginButton}>
+          Logg inn
+        </button>
+        {error && <div className={styles.error}>{error}</div>}
+      </form>
+    </div>
+  );
+}
 
 export default function SisteNyttPage() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showEditor, setShowEditor] = useState(false);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const editor = useEditor({ extensions: [StarterKit], content: '' });
 
-  // Tiptap editor instance
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: '',
-  });
+  useEffect(() => {
+    fetch('/api/blog')
+      .then(res => res.json())
+      .then(data => {
+        setBlogPosts(data);
+        setLoading(false);
+      });
+  }, [showEditor]);
 
-  // Simple local login (replace with API call for real auth)
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (username === USERNAME && password === PASSWORD) {
+  const handleLogin = async (username: string, password: string) => {
+    setLoginError("");
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    if (res.ok) {
       setLoggedIn(true);
+      setShowEditor(true);
     } else {
-      setError("Feil brukernavn eller passord");
+      const data = await res.json();
+      setLoginError(data?.message || 'Innlogging feilet');
     }
   };
 
@@ -42,72 +84,101 @@ export default function SisteNyttPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // TODO: API call to save blog post
-    setTimeout(() => {
-      setSubmitting(false);
-      alert("Blogginnlegg lagret (mock)");
+    const content = editor?.getHTML() || '';
+    const res = await fetch('/api/blog', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        content,
+        image,
+        author: 'admin',
+        is_published: true
+      })
+    });
+    setSubmitting(false);
+    if (res.ok) {
       setTitle("");
       editor?.commands.setContent('');
       setImage("");
-    }, 1200);
+      setShowEditor(false);
+      setLoggedIn(false);
+      setLoginError("");
+      // Refresh posts
+      setLoading(true);
+      fetch('/api/blog')
+        .then(res => res.json())
+        .then(data => {
+          setBlogPosts(data);
+          setLoading(false);
+        });
+    } else {
+      alert('Kunne ikke lagre blogginnlegg');
+    }
   };
 
-  if (!loggedIn) {
-    return (
-      <div className={styles.loginPrompt}>
-        <form onSubmit={handleLogin} className={styles.loginForm}>
-          <h2>Siste Nytt – Logg inn</h2>
-          <input
-            type="text"
-            placeholder="Brukernavn"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            className={styles.input}
-            autoComplete="username"
-          />
-          <input
-            type="password"
-            placeholder="Passord"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className={styles.input}
-            autoComplete="current-password"
-          />
-          {error && <div className={styles.error}>{error}</div>}
-          <button type="submit" className={styles.loginButton}>Logg inn</button>
-        </form>
-      </div>
-    );
-  }
-
   return (
-    <div className={styles.blogEditorContainer}>
-      <h1>Siste Nytt – Nytt Blogginnlegg</h1>
-      <form onSubmit={handleSubmit} className={styles.blogForm}>
-        <input
-          type="text"
-          placeholder="Tittel på innlegget"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          className={styles.input}
-          required
-        />
-        <div className={styles.formGroup}>
-          <label>Innhold</label>
-          <div className={styles.tiptapEditor}>
-            <EditorContent editor={editor} />
-          </div>
-        </div>
-        <ImageUploader onImageUploaded={handleImageUploaded} folder="blog" />
-        {image && (
-          <div className={styles.imagePreview}>
-            <img src={image} alt="Blogg-bilde" />
-          </div>
+    <div className={styles.blogViewContainer}>
+      <div className={styles.blogHeader}>
+        <h1>Siste Nytt</h1>
+        {!loggedIn && !showEditor && (
+          <div className={styles.loginCorner}><LoginBox onLogin={handleLogin} error={loginError} /></div>
         )}
-        <button type="submit" className={styles.submitButton} disabled={submitting}>
-          {submitting ? "Lagrer..." : "Publiser innlegg"}
-        </button>
-      </form>
+        {loggedIn && !showEditor && (
+          <button className={styles.addPostButton} onClick={() => setShowEditor(true)}>Ny bloggpost</button>
+        )}
+      </div>
+      {showEditor ? (
+        <form onSubmit={handleSubmit} className={styles.blogEditorForm}>
+          <h2>Ny Bloggpost</h2>
+          <div className={styles.formGroup}>
+            <label htmlFor="title">Tittel</label>
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required
+              className={styles.input}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Innhold</label>
+            <div className={styles.tiptapEditor}>
+              <EditorContent editor={editor} />
+            </div>
+          </div>
+          <div className={styles.formGroup}>
+            <label>Bilde</label>
+            <ImageUploader onImageUploaded={handleImageUploaded} folder="blog" />
+            {image && (
+              <div className={styles.imagePreview}>
+                <img src={image} alt="Preview" />
+              </div>
+            )}
+          </div>
+          <button type="submit" disabled={submitting} className={styles.submitButton}>
+            {submitting ? "Lagrer..." : "Lagre Bloggpost"}
+          </button>
+        </form>
+      ) : (
+        <div className={styles.blogList}>
+          {loading ? (
+            <div>Laster innlegg...</div>
+          ) : blogPosts.length === 0 ? (
+            <div>Ingen blogginnlegg enda.</div>
+          ) : (
+            blogPosts.map(post => (
+              <div key={post.id} className={styles.blogPost}>
+                {post.image && <img src={post.image} alt="Blogg bilde" className={styles.blogPostImage} />}
+                <h2>{post.title}</h2>
+                <div className={styles.blogPostContent} dangerouslySetInnerHTML={{ __html: post.content }} />
+                <div className={styles.blogPostMeta}>{new Date(post.created_at).toLocaleString()}</div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
