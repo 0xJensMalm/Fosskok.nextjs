@@ -95,6 +95,9 @@ const Navbar = () => {
           <Link href="/folka" className={styles.navLink} aria-current={pathname === '/folka' ? 'page' : undefined}>
             Folka
           </Link>
+          <Link href="/sistenytt" className={styles.navLink} aria-current={pathname === '/sistenytt' ? 'page' : undefined}>
+            Siste nytt
+          </Link>
           {loading ? (
             <div>Loading...</div>
           ) : (
@@ -171,6 +174,9 @@ const Navbar = () => {
           </Link>
           <Link href="/folka" className={styles.mobileNavLink} aria-current={pathname === '/folka' ? 'page' : undefined} onClick={toggleMobileMenu}>
             Folka
+          </Link>
+          <Link href="/sistenytt" className={styles.mobileNavLink} aria-current={pathname === '/sistenytt' ? 'page' : undefined} onClick={toggleMobileMenu}>
+            Siste nytt
           </Link>
           {loading ? (
             <div>Loading...</div>

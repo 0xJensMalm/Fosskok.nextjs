@@ -1,0 +1,159 @@
+.loginPrompt {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+}
+
+.loginForm {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-width: 300px;
+  max-width: 90vw;
+}
+
+.input {
+  padding: 0.7rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--divider);
+  font-size: 1rem;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.loginButton {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.loginButton:hover {
+  background: var(--accent-dark, #222);
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.95rem;
+  background: #fff4f4;
+  border: 1px solid #f8bcbc;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+}
+
+.blogEditorWrapper {
+  max-width: 700px;
+  margin: 2rem auto;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+  padding: 2rem 2.5rem;
+}
+
+.blogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.quill {
+  min-height: 200px;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.imagePreview {
+  margin: 1rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 350px;
+  border: 1px solid var(--divider);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.imagePreview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.submitButton {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.tiptapEditor {
+  font-family: var(--font-sans, 'Inter', 'Helvetica Neue', Arial, sans-serif);
+  font-size: 1rem;
+  color: var(--foreground, #222);
+  background: var(--background, #fff);
+  border: 1px solid var(--divider, #eee);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 180px;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  transition: border 0.2s;
+}
+.tiptapEditor:focus-within {
+  border-color: var(--accent, #222);
+  outline: none;
+}
+
+.tiptapEditor * {
+  font-family: inherit !important;
+  color: inherit;
+}
+
+.tiptapEditor h1,
+.tiptapEditor h2,
+.tiptapEditor h3,
+.tiptapEditor h4,
+.tiptapEditor h5 {
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--accent, #222);
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+.tiptapEditor ul,
+.tiptapEditor ol {
+  margin-left: 1.5em;
+  padding-left: 0;
+}
+.tiptapEditor p {
+  margin: 0.7em 0;
+}
+
+.blogEditorContainer button,
+.blogEditorForm button {
+  font-family: var(--font-sans, 'Inter', 'Helvetica Neue', Arial, sans-serif);
+}
+
+@media (max-width: 600px) {
+  .blogEditorWrapper, .loginForm {
+    padding: 1rem 0.5rem;
+    min-width: 0;
+  }
+}
