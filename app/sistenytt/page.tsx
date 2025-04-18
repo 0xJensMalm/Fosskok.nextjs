@@ -5,6 +5,11 @@ import styles from "./sistenytt.module.css";
 import ImageUploader from "../../src/components/admin/ImageUploader";
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import Link from '@tiptap/extension-link';
+import Image as TiptapImage from '@tiptap/extension-image';
+import TextAlign from '@tiptap/extension-text-align';
+import Heading from '@tiptap/extension-heading';
 
 // Utility: slugify a title for URLs
 function slugify(title: string) {
@@ -59,7 +64,17 @@ export default function SisteNyttPage() {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const editor = useEditor({ extensions: [StarterKit], content: '' });
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({ openOnClick: false }),
+      TiptapImage,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      Heading.configure({ levels: [1, 2, 3] })
+    ],
+    content: '',
+  });
 
   useEffect(() => {
     fetch('/api/blog')
@@ -131,64 +146,63 @@ export default function SisteNyttPage() {
   return (
     <div className={styles.blogViewContainer}>
       <div className={styles.blogHeader}>
-        <h1>Siste Nytt</h1>
-        {!loggedIn && !showEditor && (
-          <div className={styles.loginCorner}><LoginBox onLogin={handleLogin} error={loginError} /></div>
+        <h1 style={{ fontSize: '2.1rem', marginBottom: 0 }}>Siste nytt</h1>
+        {!loggedIn && (
+          <div className={styles.loginCorner}>
+            <LoginBox onLogin={handleLogin} error={loginError} />
+          </div>
         )}
         {loggedIn && !showEditor && (
-          <button className={styles.addPostButton} onClick={() => setShowEditor(true)}>Ny bloggpost</button>
+          <button className={styles.addPostButton} onClick={() => setShowEditor(true)}>
+            + Nytt innlegg
+          </button>
         )}
       </div>
-      {showEditor ? (
-        <form onSubmit={handleSubmit} className={styles.blogEditorForm}>
-          <h2>Ny Bloggpost</h2>
-          <div className={styles.formGroup}>
-            <label htmlFor="title">Tittel</label>
-            <input
-              id="title"
-              type="text"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              required
-              className={styles.input}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Innhold</label>
-            <div className={styles.tiptapEditor}>
-              <EditorContent editor={editor} />
-            </div>
-          </div>
-          <div className={styles.formGroup}>
-            <label>Bilde</label>
-            <ImageUploader onImageUploaded={handleImageUploaded} folder="blog" />
-            {image && (
-              <div className={styles.imagePreview}>
-                <img src={image} alt="Preview" />
-              </div>
-            )}
-          </div>
-          <button type="submit" disabled={submitting} className={styles.submitButton}>
-            {submitting ? "Lagrer..." : "Lagre Bloggpost"}
-          </button>
-        </form>
-      ) : (
+      {/* Blog List View */}
+      {!showEditor ? (
         <div className={styles.blogList}>
-          {loading ? (
-            <div>Laster innlegg...</div>
-          ) : blogPosts.length === 0 ? (
-            <div>Ingen blogginnlegg enda.</div>
-          ) : (
-            blogPosts.map(post => (
-              <div key={post.id} className={styles.blogPost}>
-                {post.image && <img src={post.image} alt="Blogg bilde" className={styles.blogPostImage} />}
-                <h2>{post.title}</h2>
-                <div className={styles.blogPostContent} dangerouslySetInnerHTML={{ __html: post.content }} />
-                <div className={styles.blogPostMeta}>{new Date(post.created_at).toLocaleString()}</div>
+          {loading ? <div>Laster...</div> : blogPosts.map(post => (
+            <div key={post.id} className={styles.blogPost}>
+              {post.image && (
+                <img src={post.image} alt="Blogg bilde" className={styles.blogPostImage} />
+              )}
+              <div className={styles.blogPostContent} dangerouslySetInnerHTML={{ __html: post.content }} />
+              <div className={styles.blogPostMeta}>
+                {post.author} • {new Date(post.created_at).toLocaleDateString('no-NO', { year: 'numeric', month: 'short', day: 'numeric' })}
               </div>
-            ))
-          )}
+            </div>
+          ))}
         </div>
+      ) : (
+        // Editor View
+        <form className={styles.blogForm} onSubmit={handleSubmit}>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Tittel på blogginnlegg"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+            style={{ fontSize: '1.15rem', fontWeight: 600 }}
+          />
+          <ImageUploader onImageUploaded={handleImageUploaded} />
+          {image && (
+            <div className={styles.imagePreview}>
+              <img src={image} alt="Forhåndsvisning" />
+            </div>
+          )}
+          <div style={{ border: '1px solid #eee', borderRadius: 8, background: '#fff', minHeight: 180, padding: 8 }}>
+            <EditorContent editor={editor} />
+          </div>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <button className={styles.submitButton} type="submit" disabled={submitting}>
+              {submitting ? 'Lagrer...' : 'Publiser'}
+            </button>
+            <button type="button" style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer' }} onClick={() => setShowEditor(false)}>
+              Avbryt
+            </button>
+          </div>
+        </form>
       )}
     </div>
   );
