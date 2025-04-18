@@ -10,8 +10,6 @@ import Link from '@tiptap/extension-link';
 import TiptapImage from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
 import Heading from '@tiptap/extension-heading';
-import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
 
 // Utility: slugify a title for URLs
 function slugify(title: string) {
@@ -77,6 +75,7 @@ export default function SisteNyttPage() {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [imageScale, setImageScale] = useState(100); // percent
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -202,72 +201,13 @@ export default function SisteNyttPage() {
     );
   }
 
-  // --- Image Preview, Move, and Crop ---
-  function ImageCropper({ src, onCrop }: { src: string, onCrop: (croppedUrl: string) => void }) {
-    // Track aspect ratio separately
-    const [aspect, setAspect] = useState<number>(16/9);
-    // Crop object must NOT include aspect property
-    const [crop, setCrop] = useState<Crop>({ unit: '%', width: 80, x: 10, y: 10, height: 60 });
-    const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
-    const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
-
-    useEffect(() => {
-      if (!completedCrop || !imageRef) return;
-      const canvas = document.createElement('canvas');
-      const scaleX = imageRef.naturalWidth / imageRef.width;
-      const scaleY = imageRef.naturalHeight / imageRef.height;
-      canvas.width = completedCrop.width;
-      canvas.height = completedCrop.height;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(
-          imageRef,
-          completedCrop.x * scaleX,
-          completedCrop.y * scaleY,
-          completedCrop.width * scaleX,
-          completedCrop.height * scaleY,
-          0,
-          0,
-          completedCrop.width,
-          completedCrop.height
-        );
-        canvas.toBlob(blob => {
-          if (blob) {
-            const url = URL.createObjectURL(blob);
-            onCrop(url);
-          }
-        }, 'image/jpeg');
-      }
-    }, [completedCrop, imageRef, onCrop]);
-
-    // Change aspect and reset crop
-    const setAspectAndCrop = (newAspect: number) => {
-      setAspect(newAspect);
-      setCrop({ unit: '%', width: 80, x: 10, y: 10, height: 60 });
-    };
-
+  // --- Image Scale Controls (relative to blog post) ---
+  function ImageScaleControls({ scale, setScale }: { scale: number, setScale: (val: number) => void }) {
     return (
-      <div className={styles.imageCropperContainer}>
-        <div className={styles.cropperBox}>
-          <ReactCrop
-            crop={crop}
-            onChange={(c: Crop) => setCrop(c)}
-            onComplete={(c: PixelCrop) => setCompletedCrop(c)}
-            aspect={aspect}
-          >
-            <img
-              ref={setImageRef}
-              src={src}
-              alt="Crop preview"
-              style={{ maxWidth: '100%', maxHeight: '100%' }}
-            />
-          </ReactCrop>
-        </div>
-        <div className={styles.cropperControls}>
-          <button type="button" onClick={() => setAspectAndCrop(16/9)}>Full bredde</button>
-          <button type="button" onClick={() => setAspectAndCrop(1)}>Kvadrat</button>
-          <button type="button" onClick={() => setAspectAndCrop(4/3)}>4:3</button>
-        </div>
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', margin: '0.7em 0' }}>
+        <label style={{ fontWeight: 500 }}>Bildebredde:</label>
+        <input type="range" min={20} max={100} value={scale} onChange={e => setScale(Number(e.target.value))} />
+        <span style={{ width: 35 }}>{scale}%</span>
       </div>
     );
   }
@@ -317,7 +257,10 @@ export default function SisteNyttPage() {
           <ImageUploader onImageUploaded={handleImageUploaded} />
           {image && (
             <>
-              <ImageCropper src={image} onCrop={url => setImage(url)} />
+              <ImageScaleControls scale={imageScale} setScale={setImageScale} />
+              <div className={styles.imagePreview}>
+                <img src={image} alt="Forhåndsvisning" style={{ width: `${imageScale}%`, maxWidth: '100%', borderRadius: 8, boxShadow: '0 2px 16px #0001' }} />
+              </div>
             </>
           )}
           <TiptapToolbar editor={editor} />
