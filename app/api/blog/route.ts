@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     
     // Validate required fields
-    if (!data.title || !data.content || !data.author) {
+    if (!data.title || !data.content || !data.author || !data.slug) {
       return NextResponse.json(
-        { error: 'Title, content, and author are required' },
+        { error: 'Title, content, author, and slug are required' },
         { status: 400 }
       );
     }
@@ -74,8 +74,9 @@ export async function POST(request: NextRequest) {
         title: data.title,
         content: data.content,
         author: data.author,
+        slug: data.slug,
         image: data.image || null,
-        is_published: data.published !== undefined ? data.published : true,
+        is_published: data.is_published !== undefined ? data.is_published : true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
