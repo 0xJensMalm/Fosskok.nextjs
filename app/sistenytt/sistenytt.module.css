@@ -146,6 +146,93 @@
   margin: 0.7em 0;
 }
 
+.tiptapToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  background: var(--background, #f8f8fa);
+  border: 1px solid var(--divider, #e0e0e0);
+  border-radius: 7px;
+  padding: 0.4rem 0.7rem 0.3rem 0.7rem;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.04);
+}
+.tiptapToolbar button {
+  background: none;
+  border: none;
+  color: var(--foreground, #222);
+  font-size: 1.13rem;
+  font-family: inherit;
+  padding: 0.28rem 0.55rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.16s, color 0.16s;
+  margin-bottom: 2px;
+  outline: none;
+}
+.tiptapToolbar button:disabled {
+  color: #bbb;
+  cursor: not-allowed;
+}
+.tiptapToolbar button.active,
+.tiptapToolbar button:focus {
+  background: var(--accent, #f2f2f2);
+  color: #fff;
+}
+.tiptapToolbar button:hover:not(:disabled) {
+  background: #e8e8e8;
+  color: var(--accent, #222);
+}
+.tiptapToolbar .toolbar-sep {
+  width: 1px;
+  height: 24px;
+  background: #e0e0e0;
+  margin: 0 7px;
+  align-self: center;
+}
+
+.imageCropperContainer {
+  display: flex;
+  gap: 1.6rem;
+  align-items: flex-start;
+  margin: 1.2rem 0 0.7rem 0;
+}
+.cropperBox {
+  width: 320px;
+  height: 220px;
+  background: #f5f5f5;
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cropperBox img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.cropperControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.cropperControls button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.cropperControls button:hover {
+  background: var(--accent-dark, #222);
+}
+
 .blogEditorContainer button,
 .blogEditorForm button {
   font-family: var(--font-sans, 'Inter', 'Helvetica Neue', Arial, sans-serif);
