@@ -125,11 +125,61 @@ a {
   
   h1 {
     font-size: 1.8rem;
+    word-break: break-word;
+    hyphens: auto;
   }
   
   h2 {
     font-size: 1.5rem;
+    word-break: break-word;
+    hyphens: auto;
   }
+  
+  h3, h4, h5, h6 {
+    font-size: 1.1rem;
+    word-break: break-word;
+    hyphens: auto;
+  }
+  
+  p, li, span, label, input, textarea, button {
+    font-size: 1rem;
+    word-break: break-word;
+    hyphens: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  html, body {
+    font-size: 13px;
+  }
+  h1 {
+    font-size: 1.3rem;
+  }
+  h2 {
+    font-size: 1.1rem;
+  }
+  h3, h4, h5, h6 {
+    font-size: 1rem;
+  }
+  .container, .page-container {
+    padding: 0.5rem !important;
+  }
+  p, li, span, label, input, textarea, button {
+    font-size: 0.97rem;
+  }
+}
+
+/* Prevent text overflow and force wrapping on all text elements */
+h1, h2, h3, h4, h5, h6, p, li, span, label, input, textarea, button {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* Prevent horizontal scrolling on mobile */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 @media (prefers-color-scheme: dark) {
