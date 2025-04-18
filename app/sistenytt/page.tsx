@@ -20,6 +20,17 @@ function slugify(title: string) {
     .replace(/--+/g, '-');           // Collapse multiple hyphens
 }
 
+// Utility: generate a unique slug
+function uniqueSlugify(title: string, existingSlugs: string[]) {
+  let base = slugify(title);
+  let slug = base;
+  let i = 1;
+  while (existingSlugs.includes(slug)) {
+    slug = `${base}-${i++}`;
+  }
+  return slug;
+}
+
 function LoginBox({ onLogin, error }: { onLogin: (username: string, password: string) => void; error: string }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -109,7 +120,18 @@ export default function SisteNyttPage() {
     e.preventDefault();
     setSubmitting(true);
     const content = editor?.getHTML() || '';
-    const slug = slugify(title);
+
+    // Fetch all existing slugs for uniqueness
+    let existingSlugs: string[] = [];
+    try {
+      const res = await fetch('/api/blog');
+      if (res.ok) {
+        const posts = await res.json();
+        existingSlugs = posts.map((p: any) => p.slug);
+      }
+    } catch {}
+    const slug = uniqueSlugify(title, existingSlugs);
+
     const res = await fetch('/api/blog', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -142,6 +164,35 @@ export default function SisteNyttPage() {
       alert('Kunne ikke lagre blogginnlegg');
     }
   };
+
+  // --- Tiptap Toolbar ---
+  function TiptapToolbar({ editor }: { editor: any }) {
+    if (!editor) return null;
+    return (
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} disabled={!editor.can().chain().focus().toggleBold().run()} style={{ fontWeight: 700 }}>B</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} disabled={!editor.can().chain().focus().toggleItalic().run()} style={{ fontStyle: 'italic' }}>I</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} disabled={!editor.can().chain().focus().toggleUnderline().run()} style={{ textDecoration: 'underline' }}>U</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>H1</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}>• List</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</button>
+        <button type="button" onClick={() => editor.chain().focus().setTextAlign('left').run()}>Venstre</button>
+        <button type="button" onClick={() => editor.chain().focus().setTextAlign('center').run()}>Senter</button>
+        <button type="button" onClick={() => editor.chain().focus().setTextAlign('right').run()}>Høyre</button>
+        <button type="button" onClick={() => {
+          const url = prompt('Lim inn lenke:');
+          if (url) editor.chain().focus().setLink({ href: url }).run();
+        }}>Lenke</button>
+        <button type="button" onClick={() => {
+          const url = prompt('Lim inn bilde-URL:');
+          if (url) editor.chain().focus().setImage({ src: url }).run();
+        }}>Bilde</button>
+        <button type="button" onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>Fjern formatering</button>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.blogViewContainer}>
@@ -191,6 +242,7 @@ export default function SisteNyttPage() {
               <img src={image} alt="Forhåndsvisning" />
             </div>
           )}
+          <TiptapToolbar editor={editor} />
           <div style={{ border: '1px solid #eee', borderRadius: 8, background: '#fff', minHeight: 180, padding: 8 }}>
             <EditorContent editor={editor} />
           </div>
