@@ -6,6 +6,15 @@ import ImageUploader from "../../src/components/admin/ImageUploader";
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
+// Utility: slugify a title for URLs
+function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9æøå]+/gi, '-') // Allow Norwegian chars
+    .replace(/^-+|-+$/g, '')         // Trim hyphens
+    .replace(/--+/g, '-');           // Collapse multiple hyphens
+}
+
 function LoginBox({ onLogin, error }: { onLogin: (username: string, password: string) => void; error: string }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -85,6 +94,7 @@ export default function SisteNyttPage() {
     e.preventDefault();
     setSubmitting(true);
     const content = editor?.getHTML() || '';
+    const slug = slugify(title);
     const res = await fetch('/api/blog', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -93,7 +103,8 @@ export default function SisteNyttPage() {
         content,
         image,
         author: 'admin',
-        is_published: true
+        is_published: true,
+        slug
       })
     });
     setSubmitting(false);
