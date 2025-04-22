@@ -9,7 +9,11 @@ const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.footerContent}>
         <p> {currentYear} Fosskok. Alle rettigheter reservert.</p>
-        <Link href="/admin" className={styles.adminLink}>Admin</Link>
+        <div>
+          <Link href="/vilkar" className={styles.footerLink}>Vilkår og betingelser</Link>
+          <span className={styles.linkSeparator}>|</span>
+          <Link href="/admin" className={styles.footerLink}>Admin</Link>
+        </div>
       </div>
     </footer>
   );

@@ -16,14 +16,34 @@
   font-size: 0.9rem;
 }
 
-.adminLink {
-  color: var(--accent);
+.footerLink {
+  color: var(--foreground-rgb);
   text-decoration: none;
-  transition: opacity 0.3s ease;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.footerLink:hover {
+  color: var(--primary-color); /* Or another hover color */
+  text-decoration: underline;
+}
+
+.linkSeparator {
+  margin: 0 0.5rem;
+  color: var(--foreground-rgb);
+  font-size: 0.9rem;
+}
+
+.adminLink {
+  color: var(--foreground-rgb);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
 }
 
 .adminLink:hover {
-  opacity: 0.8;
+  color: var(--primary-color); /* Or another hover color */
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {

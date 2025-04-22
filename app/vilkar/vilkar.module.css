@@ -1,0 +1,31 @@
+.vilkarContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--background-start-rgb); /* Or your desired background */
+  color: var(--foreground-rgb); /* Or your desired text color */
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.vilkarContainer h1 {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.vilkarContainer h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--primary-color); /* Example color */
+  padding-bottom: 0.3rem;
+}
+
+.vilkarContainer ul {
+  list-style: disc;
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
+.vilkarContainer p {
+    margin-bottom: 1rem;
+}
