@@ -16,6 +16,9 @@ export default function Festival() {
         </div>
         <p className={styles.subheader}>
           Sommeren 2025 vender vi tilbake til røttene – og inviterer til festival på Hammer Prestegård! Det blir musikk, mat, drikke og glede. På dagtid blir det også gratis barneprogram. Vi løfter frem lokale og kortreiste artister, og skaper en inkluderende møteplass hvor hele nabolaget, kommunen og hvem som helst ellers er velkommen!
+          <br /><br />
+          Mer info om programmet kommer.
+          Hold deg oppdatert på fosskok.no, og følg med på instagram og facebook for artistslipp.
         </p>
         
         <div className={styles.festivalContent}>
@@ -87,8 +90,8 @@ export default function Festival() {
             <div className={styles.practicalInfo}>
               <p><strong>Parkering:</strong> Stor parkeringsplass ved kirken rett på nedsiden av hagen</p>
               <p><strong>Dato:</strong> Lørdag 14. juni</p>
-              <p><strong>Start:</strong> 14.06.2025 14:00</p>
-              <p><strong>Slutt:</strong> 14.06.2025 23:59</p>
+              <p><strong>Start:</strong> 14:00</p>
+              <p><strong>Slutt:</strong> 23:59</p>
               <p><strong>Transport:</strong> Buss 110</p>
             </div>
           </section>
