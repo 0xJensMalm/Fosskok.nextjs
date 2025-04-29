@@ -12,6 +12,7 @@ import { track } from '@vercel/analytics';
 interface FeatureFlags {
   enableGrytaPage: boolean;
   enableMerchPage: boolean;
+  enableFestivalPage: boolean;
   enableThemeLab?: boolean;
 }
 
@@ -20,6 +21,7 @@ const Navbar = () => {
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>({
     enableGrytaPage: false,
     enableMerchPage: false,
+    enableFestivalPage: true, // Enabled for testing
     enableThemeLab: false
   });
   const [loading, setLoading] = useState(true);
@@ -35,15 +37,17 @@ const Navbar = () => {
         const { data, error } = await supabase
           .from('feature_flags')
           .select('key, value')
-          .in('key', ['enableGrytaPage', 'enableMerchPage', 'enableThemeLab']);
+          .in('key', ['enableGrytaPage', 'enableMerchPage', 'enableThemeLab', 'enableFestivalPage']);
           
         if (error) {
           console.error('Error fetching feature flags:', error);
           // If there's an error (like missing table), default to showing the pages
           setFeatureFlags({
             enableGrytaPage: true,
-            enableMerchPage: true
+            enableMerchPage: true,
+            enableFestivalPage: true // Always enable festival page in development or on error
           });
+          console.log('Feature flags set to defaults due to error');
           return;
         }
         
@@ -53,17 +57,21 @@ const Navbar = () => {
           return acc;
         }, {
           enableGrytaPage: false,
-          enableMerchPage: false
+          enableMerchPage: false,
+          enableFestivalPage: false
         });
         
         setFeatureFlags(flags);
+        console.log('Feature flags loaded:', flags);
       } catch (error) {
         console.error('Error fetching feature flags:', error);
         // Default to showing the pages on error
         setFeatureFlags({
           enableGrytaPage: true,
-          enableMerchPage: true
+          enableMerchPage: true,
+          enableFestivalPage: true // Always enable festival page in development or on error
         });
+        console.log('Feature flags set to defaults due to error');
       } finally {
         setLoading(false);
       }
@@ -85,7 +93,7 @@ const Navbar = () => {
     <nav className={styles.navbar}>
       <div className={styles.navContainer}>
         <Link href="/" className={styles.logoContainer}>
-          <h1 className={styles.logo}>Fosskok</h1>
+          <span className={styles.logo}>Fosskok</span>
         </Link>
 
         <div className={styles.navCenter}>
@@ -109,11 +117,16 @@ const Navbar = () => {
                   Merch
                 </Link>
               )}
+              <Link href="/praktisk-info" className={styles.navLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined}>
+                Praktisk info
+              </Link>
+              {featureFlags.enableFestivalPage && (
+                <Link href="/festival" className={styles.navLink} aria-current={pathname === '/festival' ? 'page' : undefined}>
+                  Festival i hagen 2025
+                </Link>
+              )}
             </>
           )}
-          <Link href="/praktisk-info" className={styles.navLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined}>
-            Praktisk info
-          </Link>
         </div>
 
         <div className={styles.navRight}>
@@ -186,12 +199,16 @@ const Navbar = () => {
                   Merch
                 </Link>
               )}
+              <Link href="/praktisk-info" className={styles.mobileNavLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined} onClick={toggleMobileMenu}>
+                Praktisk info
+              </Link>
+              {featureFlags.enableFestivalPage && (
+                <Link href="/festival" className={styles.mobileNavLink} aria-current={pathname === '/festival' ? 'page' : undefined} onClick={toggleMobileMenu}>
+                  Festival i hagen 2025
+                </Link>
+              )}
             </>
           )}
-          <Link href="/praktisk-info" className={styles.mobileNavLink} aria-current={pathname === '/praktisk-info' ? 'page' : undefined} onClick={toggleMobileMenu}>
-            Praktisk info
-          </Link>
-          
           <div className={styles.mobileSocialContainer}>
             <div className={styles.socialIcons}>
               <a 

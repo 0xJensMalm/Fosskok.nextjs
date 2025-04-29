@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Cool Video Title 1",
+    "link": "https://www.youtube.com/embed/dQw4w9WgXcQ", 
+    "type": "video", 
+    "memberTag": "Ola Nordmann" 
+  },
+  {
+    "title": "Amazing Abstract Art",
+    "link": "/img/placeholder-art1.jpg", 
+    "type": "image",
+    "memberTag": "Kari Nordmann"
+  },
+  {
+    "title": "Short Film Clip",
+    "link": "https://player.vimeo.com/video/123456789", 
+    "type": "video",
+    "memberTag": "Per Hansen"
+  },
+  {
+    "title": "Nature Photography",
+    "link": "/img/placeholder-nature.png", 
+    "type": "image",
+    "memberTag": "Liv Jensen"
+  }
+]
