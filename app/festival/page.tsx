@@ -10,7 +10,7 @@ import ArtistPopup from '../../src/components/ArtistPopup';
 const kirkenArtists: Artist[] = [
   {
     image: '/images/festival/brooke.png',
-    title: 'Brooke Shirley',
+    title: 'Brooke Sharkey',
     time: '',
     description: 'Brooke Sharkey er en britisk-fransk låtskriver og sanger, kjent for sin unike stemme og atmosfæriske låter på både engelsk og fransk. Hun har gitt ut flere kritikerroste album, og har fått internasjonal oppmerksomhet for sin særegne stil. Nå bosatt i Oslo, er hun aktuell med nytt album og turné.'
   },
@@ -19,20 +19,26 @@ const kirkenArtists: Artist[] = [
     title: 'Duetrost',
     time: '',
     description: 'Duetrost er en akustisk trio fra Oslo som skaper et unikt og sjarmerende musikalsk univers. Med en spennende besetning bestående av Håkon Aase på fiolin, Fredrik Karwowski på gitar og Knærten Simonsen på trommer, henter de inspirasjon fra folkemusikk, klassisk musikk og den nordiske jazzen.\n\nBandet er kjent for sine instrumentale skildringer av natur og dyreliv, hvor låttitler som "Røyskatten", "Seilfisk" og "Bever fra Mali" inviterer lytteren inn i en fantasifull og levende verden. Musikken deres er preget av improvisasjon, smittende spilleglede og et kammermusikalsk uttrykk som garantert får deg til å trekke på smilebåndet.\n\nEnten du er tilhenger av jazz, folkemusikk eller bare vakre, stemningsfulle melodier, er Duetrost et bekjentskap du ikke vil gå glipp av. Opplev deres originale komposisjoner og la deg forføre av et band som byr på både humor, sårbarhet og instrumental briljans. Hold ørene åpne for Duetrost – en trio som fargelegger norsk musikk med sine særegne og billedrike toner!'
-  },
-  {
-    image: '/images/festival/torstein.png',
-    title: 'Torstein & Tryllefløyten',
-    time: '',
-    description: ''
   }
 ];
 const hagenArtists: Artist[] = [
   {
+    image: '/images/festival/festival-poster.jpg',
+    title: 'Fosskok skrangleorkester',
+    time: '',
+    description: ''
+  },
+  {
     image: '/images/festival/august.png',
     title: 'August Kann',
     time: '',
-    description: 'August Kann debuterte i 2019 med albumet How Did All These People Get Into My Room, som ble godt mottatt for sitt personlige uttrykk og melankolske, men forfriskende visepop-sound. I 2021 ga han ut sitt andre album, This is the Sound, som ble beskrevet som en følelsesmessig berg-og-dalbane fra forelskelse til mørkere temaer. Albumet ble mikset av Joseph Lorge, kjent for sitt arbeid med Bob Dylan og John Legend. Kann har blitt sammenlignet med Paul Simon og har en særegen, hese vokal kombinert med eksperimenterende instrumentering.'
+    description: 'August Kann debuterte i 2019 med albumet How Did All These People Get Into My Room, som ble godt mottatt for sitt personlige uttrykk og melankolske, men forfriskende visepop-sound.\n\nI 2021 ga han ut sitt andre album, This is the Sound, som ble beskrevet som en følelsesmessig berg-og-dalbane fra forelskelse til mørkere temaer. Albumet ble mikset av Joseph Lorge, kjent for sitt arbeid med Bob Dylan og John Legend.\n\nKann har blitt sammenlignet med Paul Simon og har en særegen, hese vokal kombinert med eksperimenterende instrumentering.'
+  },
+  {
+    image: '/images/festival/festival-poster.jpg',
+    title: 'Soap',
+    time: '',
+    description: ''
   },
   {
     image: '/images/festival/highchief.png',
@@ -43,8 +49,14 @@ const hagenArtists: Artist[] = [
 ];
 const stabburetArtists: Artist[] = [
   {
-    image: '/images/festival/poesi.png',
-    title: 'Poesistund',
+    image: '/images/festival/festival-poster.jpg',
+    title: 'Torstein og Tryllefløyta',
+    time: '',
+    description: ''
+  },
+  {
+    image: '/images/festival/festival-poster.jpg',
+    title: 'Skyggeteater',
     time: '',
     description: ''
   }
