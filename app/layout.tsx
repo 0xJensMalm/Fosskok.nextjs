@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="no" suppressHydrationWarning>
-      <body className={`${josefin.className} ${rammetto.variable}`} suppressHydrationWarning>
+      <body className={`${rammetto.className} ${josefin.variable}`} suppressHydrationWarning>
         <ThemeProvider>
           <PromoPopup />
           <div className="page-container">

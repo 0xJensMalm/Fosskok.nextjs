@@ -29,7 +29,7 @@ const PromoPopup: React.FC = () => {
       <div className={styles.modal}>
         <button className={styles.closeBtn} onClick={handleClose} aria-label="Lukk banner">×</button>
         <img
-          src="/img/promo/festivalBanner25.jpg"
+          src="/images/festival/festival-poster.jpg"
           alt="Festival Banner 2025"
           className={styles.banner}
         />

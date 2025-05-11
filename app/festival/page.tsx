@@ -1,9 +1,58 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import ContentContainer from '../../src/components/ContentContainer';
 import styles from './page.module.css';
 import Link from 'next/link';
+import ArtistCard, { Artist } from '../../src/components/ArtistCard';
+import ArtistPopup from '../../src/components/ArtistPopup';
+
+// Example artist data for each stage
+const kirkenArtists: Artist[] = [
+  {
+    image: '/images/festival/brooke.png',
+    title: 'Brooke Shirley',
+    time: '',
+    description: 'Brooke Sharkey er en britisk-fransk låtskriver og sanger, kjent for sin unike stemme og atmosfæriske låter på både engelsk og fransk. Hun har gitt ut flere kritikerroste album, og har fått internasjonal oppmerksomhet for sin særegne stil. Nå bosatt i Oslo, er hun aktuell med nytt album og turné.'
+  },
+  {
+    image: '/images/festival/duetrost.png',
+    title: 'Duetrost',
+    time: '',
+    description: 'Duetrost er en akustisk trio fra Oslo som skaper et unikt og sjarmerende musikalsk univers. Med en spennende besetning bestående av Håkon Aase på fiolin, Fredrik Karwowski på gitar og Knærten Simonsen på trommer, henter de inspirasjon fra folkemusikk, klassisk musikk og den nordiske jazzen.\n\nBandet er kjent for sine instrumentale skildringer av natur og dyreliv, hvor låttitler som "Røyskatten", "Seilfisk" og "Bever fra Mali" inviterer lytteren inn i en fantasifull og levende verden. Musikken deres er preget av improvisasjon, smittende spilleglede og et kammermusikalsk uttrykk som garantert får deg til å trekke på smilebåndet.\n\nEnten du er tilhenger av jazz, folkemusikk eller bare vakre, stemningsfulle melodier, er Duetrost et bekjentskap du ikke vil gå glipp av. Opplev deres originale komposisjoner og la deg forføre av et band som byr på både humor, sårbarhet og instrumental briljans. Hold ørene åpne for Duetrost – en trio som fargelegger norsk musikk med sine særegne og billedrike toner!'
+  },
+  {
+    image: '/images/festival/torstein.png',
+    title: 'Torstein & Tryllefløyten',
+    time: '',
+    description: ''
+  }
+];
+const hagenArtists: Artist[] = [
+  {
+    image: '/images/festival/august.png',
+    title: 'August Kann',
+    time: '',
+    description: 'August Kann debuterte i 2019 med albumet How Did All These People Get Into My Room, som ble godt mottatt for sitt personlige uttrykk og melankolske, men forfriskende visepop-sound. I 2021 ga han ut sitt andre album, This is the Sound, som ble beskrevet som en følelsesmessig berg-og-dalbane fra forelskelse til mørkere temaer. Albumet ble mikset av Joseph Lorge, kjent for sitt arbeid med Bob Dylan og John Legend. Kann har blitt sammenlignet med Paul Simon og har en særegen, hese vokal kombinert med eksperimenterende instrumentering.'
+  },
+  {
+    image: '/images/festival/highchief.png',
+    title: 'Heigh Chief',
+    time: '',
+    description: 'Heigh Chief leverer en kruttsterk blanding av rock, americana og blues med dype røtter i sørstatssoul. Dette Oslobaserte bandet har markert seg som en formidabel liveopplevelse, kjent for sin smittende energi, spilleglede og eksepsjonelle musikalitet. Med flere kritikerroste album, inkludert det anerkjente "Chorus of Crickets", byr Heigh Chief på et tidløst lydbilde som appellerer til fans av The Allman Brothers Band og J.J. Grey & Mofro, samtidig som de har sitt eget uttrykk. Frontet av Bjørn Blix og Marcus Løvdal, og med Lars Christian Narum (Hellbillies) på tangenter, garanterer bandet en konsertopplevelse som setter spor. Gå ikke glipp av sjansen til å se et av Norges mest dynamiske band live!'
+  }
+];
+const stabburetArtists: Artist[] = [
+  {
+    image: '/images/festival/poesi.png',
+    title: 'Poesistund',
+    time: '',
+    description: ''
+  }
+];
 
 export default function Festival() {
+  const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
+
   return (
     <ContentContainer>
       <div className={styles.container}>
@@ -36,43 +85,43 @@ export default function Festival() {
           </section>
           
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Line-up</h2>
+            <h2 className={styles.sectionTitle}>Line-up <span style={{fontSize: '1rem', fontWeight: 400, marginLeft: 8}}>(med forbehold om endringer)</span></h2>
             
             <div className={styles.lineup}>
               <div className={styles.stage}>
                 <h3>Kirken</h3>
                 <div className={styles.stageTable}>
-                  <div className={styles.tableHeader}>
-                    <span>Artist</span>
-                    <span>Tid</span>
-                  </div>
-                  <div className={styles.comingSoon}>
-                    Blir annonsert snart
-                  </div>
+                  {kirkenArtists.map((artist, idx) => (
+                    <ArtistCard
+                      key={artist.title + idx}
+                      artist={artist}
+                      onClick={() => setSelectedArtist(artist)}
+                    />
+                  ))}
                 </div>
               </div>
               <div className={styles.stage}>
                 <h3>Hagen</h3>
                 <div className={styles.stageTable}>
-                  <div className={styles.tableHeader}>
-                    <span>Artist</span>
-                    <span>Tid</span>
-                  </div>
-                  <div className={styles.comingSoon}>
-                    Blir annonsert snart
-                  </div>
+                  {hagenArtists.map((artist, idx) => (
+                    <ArtistCard
+                      key={artist.title + idx}
+                      artist={artist}
+                      onClick={() => setSelectedArtist(artist)}
+                    />
+                  ))}
                 </div>
               </div>
               <div className={styles.stage}>
                 <h3>Stabburet</h3>
                 <div className={styles.stageTable}>
-                  <div className={styles.tableHeader}>
-                    <span>Artist</span>
-                    <span>Tid</span>
-                  </div>
-                  <div className={styles.comingSoon}>
-                    Blir annonsert snart
-                  </div>
+                  {stabburetArtists.map((artist, idx) => (
+                    <ArtistCard
+                      key={artist.title + idx}
+                      artist={artist}
+                      onClick={() => setSelectedArtist(artist)}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
@@ -97,6 +146,12 @@ export default function Festival() {
           </section>
         </div>
       </div>
+      {selectedArtist && (
+        <ArtistPopup
+          artist={selectedArtist}
+          onClose={() => setSelectedArtist(null)}
+        />
+      )}
     </ContentContainer>
   );
 }
