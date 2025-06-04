@@ -18,7 +18,13 @@ const ArtistPopup: React.FC<ArtistPopupProps> = ({ artist, onClose }) => {
         </div>
         <div className={styles.rightCol}>
           {artist.time && <span className={styles.time}>{artist.time}</span>}
-          <p className={styles.description}>{artist.description}</p>
+          <div className={styles.descriptionContainer}>
+            {artist.description.split('\n\n').map((paragraph, index) => (
+              <p key={index} className={styles.descriptionParagraph}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
     </div>
