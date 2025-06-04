@@ -12,7 +12,13 @@ const kirkenArtists: Artist[] = [
     image: '/images/festival/brooke.png',
     title: 'Brooke Sharkey',
     time: '',
-    description: 'Brooke Sharkey er en britisk-fransk låtskriver og sanger, kjent for sin unike stemme og atmosfæriske låter på både engelsk og fransk. Hun har gitt ut flere kritikerroste album, og har fått internasjonal oppmerksomhet for sin særegne stil. Nå bosatt i Oslo, er hun aktuell med nytt album og turné.'
+    description: 'Brooke Sharkey grew up in London before moving to France at the age of 9 inspiring her interest in songwriting in both English and French. Starting her musical journey as a street performer and session singer at 16, she has since released 2 Eps and 2 full length albums ‘One Dress’ (2012) and ‘Wandering Heart’ (V2 records- 2016). Her previous releases have gained recognition from The Guardian claiming her as one of the top 50 independent artists in the world in 2016.\n\nShe produces and co-producers her music with various artists and musicians, bringing a sense of place and encounter into each song. She uses her simple guitar sound and ethereal vocals to create a sense of space and openness in which collaborators can bring their own sound. Her unique vocal delivery and lyrics reach into the vast yet intricate themes of love, loss, hope, beauty, nature, seduction and wonder. Having relocated to Oslo in 2020 between 2 waves of Corona, she is currently releasing new songs with a her new album entitled ‘Under Stones’ to be released on September 4th this year, and touring with Aksel Undset (Isak’s island) in UK and Norway and Jean- Baptiste Soulard in France. \n\nHer first single, A place go to,  is already getting attention with a review in KLOFF mag in the Uk, and plays on BBC radio 3 and BBC Ulster, as well as a video premiere (filmed by Mina wang Anderson) shared by Arvid Skancke-Knutsen on Ballad.no (Norway).'
+  },
+  {
+    image: '/images/festival/placeholder.png',
+    title: 'Torstein og Tryllefløyta',
+    time: '',
+    description: ''
   },
   {
     image: '/images/festival/duetrost.png',
@@ -23,8 +29,14 @@ const kirkenArtists: Artist[] = [
 ];
 const hagenArtists: Artist[] = [
   {
-    image: '/images/festival/festival-poster.jpg',
-    title: 'Fosskok skrangleorkester',
+    image: '/images/festival/korps.jpg',
+    title: 'Lørenskog Barnekorps',
+    time: '',
+    description: 'Lørenskog skolekorps har musikanter i alder 8 til 19 år fra alle skolene i Lørenskog. I dag får vi underholdning av Hovedkorpset, som holder et høyt aktivitetsnivå og har mange ulike opptredener i løpet av året. Alle kjenner til spilling på 17. mai, men vi deltar også i NM for skolekorps og korpsbattle, holder showkonsert i Storstua LHUS og har flere spilleoppdrag i løpet av året. Nå får dere en smakebit av vårt show-repertoar.'
+  },
+  {
+    image: '/images/festival/placeholder.png',
+    title: 'Fosskok Skrangleorkester',
     time: '',
     description: ''
   },
@@ -32,33 +44,39 @@ const hagenArtists: Artist[] = [
     image: '/images/festival/august.png',
     title: 'August Kann',
     time: '',
-    description: 'August Kann debuterte i 2019 med albumet How Did All These People Get Into My Room, som ble godt mottatt for sitt personlige uttrykk og melankolske, men forfriskende visepop-sound.\n\nI 2021 ga han ut sitt andre album, This is the Sound, som ble beskrevet som en følelsesmessig berg-og-dalbane fra forelskelse til mørkere temaer. Albumet ble mikset av Joseph Lorge, kjent for sitt arbeid med Bob Dylan og John Legend.\n\nKann har blitt sammenlignet med Paul Simon og har en særegen, hese vokal kombinert med eksperimenterende instrumentering.'
+    description: 'August Kann er en norsk musiker og låtskriver fra Langhus i Ski kommune. Han debuterte i 2019 med albumet How Did All These People Get Into My Room, som ble godt mottatt for sitt personlige uttrykk og melankolske, men forfriskende visepop-sound.\n\nI 2021 ga han ut sitt andre album, This is the Sound, som ble beskrevet som en følelsesmessig berg-og-dalbane fra forelskelse til mørkere temaer. Albumet ble mikset av Joseph Lorge, kjent for sitt arbeid med artister som Bob Dylan og John Legend. Kann har blitt sammenlignet med Paul Simon og har en særegen, hese vokal kombinert med eksperimenterende instrumentering.\n\nHan har utdanning fra Toneheim Folkehøgskole, Norges musikkhøgskole og jazzlinja ved Universitetet i Stavanger. I tillegg til å skrive og produsere sin egen musikk, har han spilt konserter i Norge, England og Danmark, og har vært listet på NRK P1 og Spotify-spillelister som New Music Friday Norway'
   },
   {
-    image: '/images/festival/festival-poster.jpg',
+    image: '/images/festival/endakaldere.jpg',
+    title: 'Enda Kaldere',
+    time: '',
+    description: 'Hurra! Enda Kaldere kommer til Fosskok-festivalen!\nEnda Kaldere er ei sang- og spellemannsgruppe fra Lørenskog, og består av\nFinn Evensen, Ole Jørgen Holt Hanssen, Roar Vangen og Jon Haaland.\n\nGruppa ble unnfanget da det gikk av en sprengladning under byggingen av\nRiksvei 159, like ved det som en gang var Pokerskauen.\nNavnet Enda Kaldere rappet de fra en butikk på Visperud, som alltid\nreklamerte med enda kaldere drikke enn nabosjappa på heite\nsommerdager.\n\nOm det ringer en bjelle for deg, så er ikke det så rart; gruppas medlemmer\nhar alle en fortid i gruppa Bjelleklang. Lørenskog-kara forteller, at de alltid utfordrer seg sjøl, både med instrumentene (det er mange av dem!) og teknikken, og de legger sjela i å\nlåte lørenskausk, - selv om de også henter fram musikk som har seilt\nlangveisfra over mange landegrenser.\n\nNå gleder de seg til å hamre løs ved Hammersberget, og så kan vi jo\ndrømme om at det kommer til å fosskoke i selveste Olavskilden!'
+  },
+  {
+    image: '/images/festival/placeholder.png',
     title: 'Soap',
     time: '',
     description: ''
   },
   {
-    image: '/images/festival/highchief.png',
+    image: '/images/festival/heighchief.jpg',
     title: 'Heigh Chief',
     time: '',
-    description: 'Heigh Chief leverer en kruttsterk blanding av rock, americana og blues med dype røtter i sørstatssoul. Dette Oslobaserte bandet har markert seg som en formidabel liveopplevelse, kjent for sin smittende energi, spilleglede og eksepsjonelle musikalitet. Med flere kritikerroste album, inkludert det anerkjente "Chorus of Crickets", byr Heigh Chief på et tidløst lydbilde som appellerer til fans av The Allman Brothers Band og J.J. Grey & Mofro, samtidig som de har sitt eget uttrykk. Frontet av Bjørn Blix og Marcus Løvdal, og med Lars Christian Narum (Hellbillies) på tangenter, garanterer bandet en konsertopplevelse som setter spor. Gå ikke glipp av sjansen til å se et av Norges mest dynamiske band live!'
+    description: 'Oslobaserte Heigh Chief har gjennom de siste årene blitt synonymt med velspilt,\nfengende og solid rock og americana. Med sitt femte album i rekka, tilfører bandet ny\nenergi til et allerede gjennomarbeidet lydbilde, kruttsterkt låtmateriale og en vanvittig\ndynamikk. En konsert med Heigh Chief er bortimot så riktig som det kan få blitt: ingen\nmas om moshpit eller allsang, kun råbra låter ærlig presentert av et koppel med svært\nhabile musikere.'
   }
 ];
 const stabburetArtists: Artist[] = [
   {
-    image: '/images/festival/festival-poster.jpg',
+    image: '/images/festival/placeholder.png',
     title: 'Torstein og Tryllefløyta',
     time: '',
     description: ''
   },
   {
-    image: '/images/festival/festival-poster.jpg',
-    title: 'Skyggeteater',
+    image: '/images/festival/bortinatta.jpg',
+    title: 'Borti Natta skyggeteater',
     time: '',
-    description: ''
+    description: 'Borti natta - en poesistund\nVelkommen til en varm og tankevekkende poesistund for hele familien! \nBasert på Ingvild H. Rishøi sin bok “Borti natta - rim for barn og voksne” inviterer skuespiller Ingeborg Larsen, gitarist Fredrik Karwowski og skyggefigurspiller Henriette Grøtting Kihle til en musikalsk og visuell poesistund på Lørenskog bibliotek. Diktene handler om alt fra livsvisdom og hypokondri til hodelus, sommerkvelder, og barn som har gått seg vill på kjøpesenter. Forestillingen varer i ca. 30 minutter og byr på poesi, skyggeteater og musikk i skjønn forening. \n\nPasser for alle mellom 0 og 100 år! \n\nMedvirkende: Henriette Grøtting Kihle, Ingeborg Larsen og Fredrik Karwowski\nDikt: Ingvild H. Rishøi \nMusikk: Fredrik Karwowski \nSkyggefigurer: Henriette Grøtting Kihle\nProdusent: Ingeborg Larsen  \nScenografi/lys: Henriette Grøtting Kihle, Ingeborg Larsen og Fredrik Karwowski\n\nForestillingen er støttet av Lørenskog kommune og Sparebankstiftelsen DNB. \n\nBildet er fra Henriettes tidligere prosjekt “Skyggetunnelen”.'
   }
 ];
 
@@ -101,7 +119,7 @@ export default function Festival() {
             
             <div className={styles.lineup}>
               <div className={styles.stage}>
-                <h3>Kirken</h3>
+                <h3>Lørenskog Kirke</h3>
                 <div className={styles.stageTable}>
                   {kirkenArtists.map((artist, idx) => (
                     <ArtistCard
@@ -113,7 +131,7 @@ export default function Festival() {
                 </div>
               </div>
               <div className={styles.stage}>
-                <h3>Hagen</h3>
+                <h3>Hagescenen</h3>
                 <div className={styles.stageTable}>
                   {hagenArtists.map((artist, idx) => (
                     <ArtistCard
@@ -142,18 +160,18 @@ export default function Festival() {
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Mat og drikke</h2>
             <p className={styles.foodDrinkText}>
-              Vi serverer kortreist mat og drikke disket opp av vår egen stjernekokk!
+             Informasjon kommer!
             </p>
           </section>
           
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Praktisk info</h2>
             <div className={styles.practicalInfo}>
-              <p><strong>Parkering:</strong> Stor parkeringsplass ved kirken rett på nedsiden av hagen</p>
+              <p><strong>Parkering:</strong> Parkering på gravplassen rett ved kirken fra 12-16. Fra 16 kan man stå på den store parkeringsplassen utenfor kirken.</p>
               <p><strong>Dato:</strong> Lørdag 14. juni</p>
               <p><strong>Start:</strong> 14:00</p>
               <p><strong>Slutt:</strong> 23:59</p>
-              <p><strong>Transport:</strong> Buss 110</p>
+              <p><strong>Transport:</strong> Buss 110 stopper 2 minutter unna og går nesten hele døgnet.</p>
             </div>
           </section>
         </div>
