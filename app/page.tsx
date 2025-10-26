@@ -19,7 +19,7 @@ export default function Home() {
             <a href="https://www.youtube.com/@FosskokRecords" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="YouTube">
               <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a2.995 2.995 0 00-2.11-2.117C19.383 3.5 12 3.5 12 3.5s-7.383 0-9.388.569A2.995 2.995 0 00.502 6.186 31.457 31.457 0 000 12a31.457 31.457 0 00.502 5.814 2.995 2.995 0 002.11 2.117C4.617 20.5 12 20.5 12 20.5s7.383 0 9.388-.569a2.995 2.995 0 002.11-2.117A31.457 31.457 0 0024 12a31.457 31.457 0 00-.502-5.814zM9.75 15.5v-7l6 3.5-6 3.5z"/></svg>
             </a>
-            <a href="https://www.facebook.com/profile.php?id=61571690984113" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <a href="https://www.facebook.com/people/Fosskok-Samvirkelag/61571690984113/#" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.676 0H1.324A1.324 1.324 0 000 1.324v21.352C0 23.403.597 24 1.324 24H12.82v-9.294H9.692V11.08h3.128V8.413c0-3.1 1.894-4.788 4.659-4.788 1.324 0 2.462.099 2.794.143v3.24l-1.918.001c-1.504 0-1.794.715-1.794 1.763v2.312h3.587l-.467 3.626h-3.12V24h6.116C23.403 24 24 23.403 24 22.676V1.324A1.324 1.324 0 0022.676 0z"/></svg>
             </a>
           </div>
