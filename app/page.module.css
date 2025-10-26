@@ -543,3 +543,61 @@ a.secondary {
   transform: translateX(-50%);
   width: 100%;
 }
+
+/* Bottom links and social icons */
+.bottomBar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 2%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.linkRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.framedLink {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 2px solid #ffd700;
+  color: #ffd700;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  background: transparent;
+}
+
+.framedLink:hover {
+  filter: brightness(1.1);
+}
+
+.socialRow {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.socialLink {
+  color: #ffd700;
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+}
+
+.socialLink svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
