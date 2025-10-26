@@ -3,6 +3,35 @@ import type { NextRequest } from 'next/server';
 import { createClient } from './utils/supabase/client';
 
 export async function middleware(request: NextRequest) {
+  // Global offline mode: rewrite everything to '/' except static assets needed for the landing page
+  const pathname = request.nextUrl.pathname;
+  const isAsset =
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/images') ||
+    pathname.startsWith('/img') ||
+    pathname.startsWith('/fonts') ||
+    pathname === '/favicon.ico' ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/vercel.svg' ||
+    pathname === '/next.svg' ||
+    pathname === '/file.svg' ||
+    pathname === '/window.svg';
+
+  // Apply X-Robots-Tag for deindexing on the homepage too
+  if (pathname === '/') {
+    const res = NextResponse.next();
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return res;
+  }
+
+  if (!isAsset) {
+    const url = new URL('/', request.url);
+    const res = NextResponse.rewrite(url);
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return res;
+  }
+
   // Check if the path is for disabled feature pages
   if (request.nextUrl.pathname === '/gryta' || request.nextUrl.pathname === '/merch') {
     // Initialize Supabase client
@@ -71,5 +100,5 @@ export async function middleware(request: NextRequest) {
 
 // Configure the paths that should be checked by the middleware
 export const config = {
-  matcher: ['/admin/:path*', '/gryta', '/merch', '/api/feature-flags'],
+  matcher: '/:path*',
 };
